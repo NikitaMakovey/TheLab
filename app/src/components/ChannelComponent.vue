@@ -16,9 +16,13 @@
                     labels: this.channeldata,
                     datasets: [
                         {
+                            pointRadius: 0,
                             label: this.channelname,
-                            backgroundColor: '#f87979',
-                            data: this.channeldata
+                            backgroundColor: 'white',
+                            data: this.channeldata,
+                            pointStyle: 'line',
+                            borderWidth: 1,
+                            borderColor: 'black'
                         }
                     ]
                 },
