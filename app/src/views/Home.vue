@@ -136,16 +136,22 @@
     </v-system-bar>
     <v-col cols="12">
       <v-row>
-        <v-col cols="12">
+        <v-spacer></v-spacer>
+        <v-col cols="7">
+
+        </v-col>
+        <v-col cols="3">
           <template v-if="this.$store.getters.CHANNELS !== null">
             <v-col cols="12">
               <v-subheader>Каналы</v-subheader>
               <v-row v-for="(data, index) in this.$store.getters.CHANNELS" :key="index">
-                <channel-component :channeldata="data" :channelname="'NP' + index"></channel-component>
+                <channel-component :chartData="data" :chartName="($store.getters.NAMES)[index]">
+                </channel-component>
               </v-row>
             </v-col>
           </template>
         </v-col>
+        <v-spacer></v-spacer>
       </v-row>
     </v-col>
   </div>
@@ -170,14 +176,16 @@
     },
     methods: {
       loadFile: function (e) {
-        const file = e.target.files[0];
+        this.$store.dispatch('UPDATE_CHANNELS', null).then(() => {
+          const file = e.target.files[0];
 
-        let file__type = file.type;
-        let file__name = file.name;
+          let file__type = file.type;
+          let file__name = file.name;
 
-        if (file__type === "text/plain") {
-          this.readFile(file);
-        }
+          if (file__type === "text/plain") {
+            this.readFile(file);
+          }
+        });
       },
       readFile: function (file) {
         let CHANNELS = null;
@@ -201,6 +209,9 @@
               }
               if (cnt === 11) {
                 const CHANNELS_NAMES = d.split(";");
+                store.dispatch('UPDATE_CHANNEL_NAMES', CHANNELS_NAMES).then(() => {
+                  //
+                })
               }
             } else {
               for (let i = 0; i < localStorage.getItem('FILE__COUNT_CHANNELS'); i++) {
@@ -216,7 +227,7 @@
         reader.readAsText(file);
       },
       drawChannels: function() {
-        console.log(this.$store.getters.CHANNELS);
+        //console.log(this.$store.getters.CHANNELS);
       }
     }
   }

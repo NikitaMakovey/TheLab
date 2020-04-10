@@ -5,34 +5,30 @@
 </template>
 
 <script>
-    import { Line } from 'vue-chartjs'
+    import { Line, mixins } from 'vue-chartjs'
 
     export default {
         extends: Line,
-        props: ['channeldata', 'channelname'],
-        data() {
-            return {
-                chartdata: {
-                    labels: this.channeldata,
+        props: ['chartData', 'chartName'],
+        mixins: [mixins.reactiveProp],
+        mounted () {
+            this.renderChart({
+                    labels: this.chartData,
                     datasets: [
                         {
                             pointRadius: 0,
-                            label: this.channelname,
+                            label: this.chartName,
                             backgroundColor: 'white',
-                            data: this.channeldata,
+                            data: this.chartData,
                             pointStyle: 'line',
                             borderWidth: 1,
                             borderColor: 'black'
                         }
                     ]
                 },
-                options: {
+                {
                     responsive: true
-                }
-            }
-        },
-        mounted () {
-            this.renderChart(this.chartdata, this.options);
+                });
         }
     }
 </script>
