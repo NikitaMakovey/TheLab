@@ -143,17 +143,17 @@
           </v-card-title>
 
           <v-card-text>
-            <p class="mb-1">Общее число каналов - {{ dialog_info === false ? null : localStorage.getItem('FILE__COUNT_CHANNELS') }}</p>
-            <p class="mb-1">Общее количество отсчетов - {{ dialog_info === false ? null : localStorage.getItem('FILE__COUNT_STEPS') }}</p>
-            <p class="mb-1">Частота дискретизации - {{ dialog_info === false ? null : localStorage.getItem('FILE__GIGE') }}</p>
-            <p class="mb-1">Дата и время начала записи - {{ dialog_info === false ? null : localStorage.getItem('FILE__DATE_BEGIN') }}</p>
-            <p class="mb-1">Дата и время окончания записи - {{ dialog_info === false ? null : localStorage.getItem('FILE__DATE_END') }}</p>
+            <p class="mb-1">Общее число каналов - {{ dialog_info === false ? null : null }}</p>
+            <p class="mb-1">Общее количество отсчетов - {{ dialog_info === false ? null : null }}</p>
+            <p class="mb-1">Частота дискретизации - {{ dialog_info === false ? null : null }}</p>
+            <p class="mb-1">Дата и время начала записи - {{ dialog_info === false ? null : null }}</p>
+            <p class="mb-1">Дата и время окончания записи - {{ dialog_info === false ? null : null }}</p>
             <p class="mb-1">
               Длительность:
-              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getDay()) }} - суток,
-              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getHours()) }} - часов,
-              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getMinutes()) }} - минут,
-              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getSeconds()) }} - секунд
+              {{ dialog_info === false ? null : null }} - суток,
+              {{ dialog_info === false ? null : null }} - часов,
+              {{ dialog_info === false ? null : null }} - минут,
+              {{ dialog_info === false ? null : null }} - секунд
             </p>
           </v-card-text>
 
@@ -164,16 +164,16 @@
             <template v-slot:default>
               <thead>
               <tr>
-                <th class="text-left">№</th>
-                <th class="text-left">Имя</th>
-                <th class="text-left">Источник</th>
+                <th class="text-center">№</th>
+                <th class="text-center">Имя</th>
+                <th class="text-center">Источник</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(item, index) in this.$store.getters.NAMES" :key="item">
-                <td>{{ index }}</td>
+              <tr v-for="(item, index) in $store.getters.NAMES" :key="item">
+                <td>{{ index + 1 }}</td>
                 <td>{{ item }}</td>
-                <td>{{ dialog_info === false ? null : localStorage.getItem('FILE_SOURCE') }}</td>
+                <td>{{ dialog_info === false ? null : null }}</td>
               </tr>
               </tbody>
             </template>
@@ -237,7 +237,7 @@
         notifications: false,
         sound: true,
         widgets: false,
-        dialog_info: false
+        dialog_info: false,
       }
     },
     methods: {
@@ -302,7 +302,7 @@
                 let date_str = date_first_part + ' ' + date_array[0];
                 let date__first = new Date(date_str);
                 console.log(date__first.toDateString());
-                localStorage.setItem('FILE__DATE_BEGIN', date__first.toDateString());
+                localStorage.setItem('FILE__DATE_BEGIN', date_str);
                 console.log(localStorage.getItem('FILE__DATE_BEGIN'));
                 let time = localStorage.getItem('FILE__COUNT_STEPS') * (1 / localStorage.getItem('FILE__GIGE'));
                 //let date_1 = new Date(localStorage.getItem('FILE__DATE_BEGIN'));
