@@ -25,7 +25,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <span>Моделирование</span>
+      <span @click.stop="dialog_info = true">Инструменты</span>
       <span>Фильтрация</span>
       <span>Анализ</span>
       <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
@@ -132,6 +132,70 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog
+              v-model="dialog_info"
+              max-width="600"
+      >
+        <v-card>
+          <v-card-title class="headline" style="font-size: 1rem !important;">
+            Текущее состояние многоканального сигнала
+          </v-card-title>
+
+          <v-card-text>
+            <p class="mb-1">Общее число каналов - {{ dialog_info === false ? null : localStorage.getItem('FILE__COUNT_CHANNELS') }}</p>
+            <p class="mb-1">Общее количество отсчетов - {{ dialog_info === false ? null : localStorage.getItem('FILE__COUNT_STEPS') }}</p>
+            <p class="mb-1">Частота дискретизации - {{ dialog_info === false ? null : localStorage.getItem('FILE__GIGE') }}</p>
+            <p class="mb-1">Дата и время начала записи - {{ dialog_info === false ? null : localStorage.getItem('FILE__DATE_BEGIN') }}</p>
+            <p class="mb-1">Дата и время окончания записи - {{ dialog_info === false ? null : localStorage.getItem('FILE__DATE_END') }}</p>
+            <p class="mb-1">
+              Длительность:
+              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getDay()) }} - суток,
+              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getHours()) }} - часов,
+              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getMinutes()) }} - минут,
+              {{ dialog_info === false ? null : (new Date(localStorage.getItem('FILE__DATE_INFO')).getSeconds()) }} - секунд
+            </p>
+          </v-card-text>
+
+          <v-simple-table dark>
+            <v-data-table-header>
+              Информация о каналах
+            </v-data-table-header>
+            <template v-slot:default>
+              <thead>
+              <tr>
+                <th class="text-left">№</th>
+                <th class="text-left">Имя</th>
+                <th class="text-left">Источник</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="(item, index) in this.$store.getters.NAMES" :key="item">
+                <td>{{ index }}</td>
+                <td>{{ item }}</td>
+                <td>{{ dialog_info === false ? null : localStorage.getItem('FILE_SOURCE') }}</td>
+              </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+          <v-card-text>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn
+                    color="green darken-1"
+                    text
+                    @click="dialog_info = false"
+            >
+              ОК
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-spacer></v-spacer>
     </v-system-bar>
     <v-col cols="12">
@@ -153,6 +217,7 @@
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
+
     </v-col>
   </div>
 </template>
@@ -172,15 +237,20 @@
         notifications: false,
         sound: true,
         widgets: false,
+        dialog_info: false
       }
     },
     methods: {
+      showInfo: function () {
+
+      },
       loadFile: function (e) {
         this.$store.dispatch('UPDATE_CHANNELS', null).then(() => {
           const file = e.target.files[0];
 
           let file__type = file.type;
           let file__name = file.name;
+          localStorage.setItem('FILE_SOURCE', file__name);
 
           if (file__type === "text/plain") {
             this.readFile(file);
@@ -197,15 +267,52 @@
           const DATA = reader.result.split("\n").map(function (d) {
             let delta = d.split(" ");
             if (cnt < 12) {
+              //console.log(delta);
               if (cnt === 1) {
                 let count_channels = Number(delta[0]);
                 if (count_channels > 0 && count_channels !== null) {
                   localStorage.setItem('FILE__COUNT_CHANNELS', count_channels);
+                  console.log(localStorage.getItem('FILE__COUNT_CHANNELS'));
                   CHANNELS = new Array(localStorage.getItem('FILE__COUNT_CHANNELS'));
                   for (let i = 0; i < localStorage.getItem('FILE__COUNT_CHANNELS'); i++) {
                     CHANNELS[i] = new Array(0);
                   }
                 }
+              }
+              if (cnt ===  3) {
+                let count_steps = Number(delta[delta.length - 1]);
+                localStorage.setItem('FILE__COUNT_STEPS', count_steps);
+                console.log(localStorage.getItem('FILE__COUNT_STEPS'));
+              }
+              if (cnt === 5) {
+                let count_gige = Number(delta[delta.length - 1]);
+                localStorage.setItem('FILE__GIGE', count_gige);
+                console.log(localStorage.getItem('FILE__GIGE'));
+              }
+              if (cnt === 7) {
+                let date_first_part = delta[0];
+                localStorage.setItem('FILE__DATE_BEGIN', date_first_part);
+                console.log(localStorage.getItem('FILE__DATE_BEGIN'));
+              }
+              if (cnt === 9) {
+                let date_second_part = delta[0];
+                let date_first_part = localStorage.getItem('FILE__DATE_BEGIN');
+                let date_array = date_second_part.split('.');
+                //date_first_part = date_array[2] + '-' + date_array[1] + '-' + date_array[0];
+                let date_str = date_first_part + ' ' + date_array[0];
+                let date__first = new Date(date_str);
+                console.log(date__first.toDateString());
+                localStorage.setItem('FILE__DATE_BEGIN', date__first.toDateString());
+                console.log(localStorage.getItem('FILE__DATE_BEGIN'));
+                let time = localStorage.getItem('FILE__COUNT_STEPS') * (1 / localStorage.getItem('FILE__GIGE'));
+                //let date_1 = new Date(localStorage.getItem('FILE__DATE_BEGIN'));
+                console.log(date__first);
+                let date_2 = new Date();
+                date_2.setSeconds(date__first.getSeconds() + parseInt(time.toString()));
+                localStorage.setItem('FILE__DATE_END', date_2.toDateString());
+                console.log(localStorage.getItem('FILE__DATE_END'));
+                localStorage.setItem('FILE__DATE_INFO', (parseInt(time.toString())).toString());
+                console.log(localStorage.getItem('FILE__DATE_INFO'));
               }
               if (cnt === 11) {
                 const CHANNELS_NAMES = d.split(";");
