@@ -238,6 +238,21 @@
         sound: true,
         widgets: false,
         dialog_info: false,
+
+        infoObject: {
+          countChannels: null,
+          countSteps: null,
+          gige: null,
+          beginDate: null,
+          endDate: null,
+          date: {
+            days: null,
+            hours: null,
+            minutes: null,
+            seconds: null
+          }
+        }
+
       }
     },
     methods: {
@@ -250,6 +265,7 @@
 
           let file__type = file.type;
           let file__name = file.name;
+          // TODO: set this to reactive data
           localStorage.setItem('FILE_SOURCE', file__name);
 
           if (file__type === "text/plain") {
