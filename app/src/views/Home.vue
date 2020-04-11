@@ -137,18 +137,18 @@
     <v-col cols="12">
       <v-row>
         <v-spacer></v-spacer>
-        <v-col cols="7">
+        <v-col cols="8">
 
         </v-col>
-        <v-col cols="3">
+        <v-col cols="2">
           <template v-if="this.$store.getters.CHANNELS !== null">
-            <v-col cols="12">
-              <v-subheader>Каналы</v-subheader>
-              <v-row v-for="(data, index) in this.$store.getters.CHANNELS" :key="index">
+            <div style="width: 201px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
+              <v-subheader class="ma-0 pa-2 title ">Каналы</v-subheader>
+              <v-row v-for="(data, index) in this.$store.getters.CHANNELS" :key="index" class="pa-0 ma-0">
                 <channel-component :chartData="data" :chartName="($store.getters.NAMES)[index]">
                 </channel-component>
               </v-row>
-            </v-col>
+            </div>
           </template>
         </v-col>
         <v-spacer></v-spacer>

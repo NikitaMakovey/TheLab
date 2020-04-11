@@ -1,6 +1,6 @@
 <template>
     <div>
-        <canvas ref="canvas"></canvas>
+        <canvas height="100" width="200" style="border: 1px solid black; padding: 1px;" ref="canvas"></canvas>
     </div>
 </template>
 
@@ -27,6 +27,14 @@
                     ]
                 },
                 {
+                    scales:{
+                        xAxes: [{
+                            display: false
+                        }],
+                        yAxes: [{
+                            display: false
+                        }]
+                    },
                     responsive: true
                 });
         }
