@@ -9,6 +9,7 @@
       </router-link>
     </v-system-bar>
     <v-system-bar window light style="overflow-x: scroll">
+
       <v-menu bottom offset-y>
         <template v-slot:activator="{ on }">
                     <span
@@ -25,116 +26,43 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <span @click.stop="dialog_info = true">Инструменты</span>
-      <span>Фильтрация</span>
-      <span>Анализ</span>
-      <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+
+      <span @click.stop="infoDialog = fileSource!==null">Инструменты</span>
+
+      <v-dialog v-model="aboutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <template v-slot:activator="{ on }">
-          <span v-on="on">Настройки</span>
+          <span v-on="on">Справка</span>
         </template>
         <v-card>
           <v-toolbar dark color="black">
-            <v-btn icon dark @click="dialog = false">
+            <v-btn icon dark @click="aboutDialog = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-toolbar-title>Настройки</v-toolbar-title>
+            <v-toolbar-title>Справка</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-              <v-btn dark text @click="dialog = false">Сохранить</v-btn>
+              <v-btn dark text @click="aboutDialog = false">Закрыть</v-btn>
             </v-toolbar-items>
           </v-toolbar>
           <v-list three-line subheader>
-            <v-subheader>Настройки изображения</v-subheader>
-            <v-list-item>
+            <v-subheader class="title">Система визуализации многоканальных сигналов</v-subheader>
+            <div>
               <v-list-item-content>
-                <v-list-item-title>Что-то настроить</v-list-item-title>
-                <v-list-item-subtitle>Set the content filtering level to restrict apps that can be downloaded</v-list-item-subtitle>
+                <v-list-item-title class="title text--accent-3">Группа: Б8118-01.03.02систпро</v-list-item-title>
+                <v-list-item-subtitle></v-list-item-subtitle>
               </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Что-то ещё настроить</v-list-item-title>
-                <v-list-item-subtitle>Require password for purchase or use password to restrict purchase</v-list-item-subtitle>
+            </div>
+            <div v-for="(person, i) in persons" :key="i" class="ma-0 pa-0">
+              <v-list-item-content class="ma-0 pa-1">
+                <v-list-item-title class="ma-0 pa-0 title text--secondary">{{ person }}</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </div>
           </v-list>
-          <v-divider></v-divider>
-          <v-list three-line subheader>
-            <v-subheader>Общие настройки</v-subheader>
-            <v-list-item>
-              <v-list-item-action>
-                <v-checkbox v-model="notifications"></v-checkbox>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Уведомления</v-list-item-title>
-                <v-list-item-subtitle>Уведомлять me about updates to apps or games that I downloaded</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-action>
-                <v-checkbox v-model="sound"></v-checkbox>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Звук</v-list-item-title>
-                <v-list-item-subtitle>Auto-update apps at any time. Data charges may apply</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-action>
-                <v-checkbox v-model="widgets"></v-checkbox>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Автомотическое добавление окон</v-list-item-title>
-                <v-list-item-subtitle>Automatically add home screen widgets</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-dialog>
-      <span
-              @click.stop="dialog_about = true"
-      >
-                Справка
-            </span>
-      <v-dialog
-              v-model="dialog_about"
-              max-width="600"
-      >
-        <v-card>
-          <v-card-title class="headline" style="font-size: 1rem !important;">
-            Система визуализации многоканальных сигналов
-          </v-card-title>
-          <v-card-title class="headline" style="color: #6574cd">
-            Группа: Б8118-01.03.02систпро
-          </v-card-title>
-          <v-card-title class="headline" style="color: #a9a9a9">
-            Состав команды:
-          </v-card-title>
-
-          <v-card-text>
-            <p class="mb-1">Маковей Никита</p>
-            <p class="mb-1">Романенкова Людмила</p>
-            <p class="mb-1">Лоншакова Анастасия</p>
-            <p class="mb-1">Ващенко Светлана</p>
-            <p class="mb-1">Гасанова Сабина</p>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-
-            <v-btn
-                    color="green darken-1"
-                    text
-                    @click="dialog_about = false"
-            >
-              ОК
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
 
       <v-dialog
-              v-model="dialog_info"
+              v-model="infoDialog"
               max-width="600"
       >
         <v-card>
@@ -146,8 +74,8 @@
             <p class="mb-1">Общее число каналов - {{ infoObject.countChannels }}</p>
             <p class="mb-1">Общее количество отсчетов - {{ infoObject.countSteps }}</p>
             <p class="mb-1">Частота дискретизации - {{ infoObject.countGiges }}</p>
-            <p class="mb-1">Дата и время начала записи - {{ infoObject.startDate }}</p>
-            <p class="mb-1">Дата и время окончания записи - {{ infoObject.endDate }}</p>
+            <p class="mb-1">Дата и время начала записи - {{ $moment(infoObject.startDate).format('LLL') }}</p>
+            <p class="mb-1">Дата и время окончания записи - {{ $moment(infoObject.endDate).format('LLL') }}</p>
             <p class="mb-1">
               Длительность:
               {{ infoObject.date.days }} - суток,
@@ -182,13 +110,13 @@
           <v-card-text>
           </v-card-text>
 
-          <v-card-actions>
+          <v-card-actions class="pa-4 ma-0">
             <v-spacer></v-spacer>
 
             <v-btn
                     color="green darken-1"
                     text
-                    @click="dialog_info = false"
+                    @click="infoDialog = false"
             >
               ОК
             </v-btn>
@@ -198,6 +126,7 @@
 
       <v-spacer></v-spacer>
     </v-system-bar>
+
     <v-col cols="12">
       <v-row>
         <v-spacer></v-spacer>
@@ -232,12 +161,15 @@
     },
     data() {
       return {
-        dialog_about: false,
-        dialog: false,
-        notifications: false,
-        sound: true,
-        widgets: false,
-        dialog_info: false,
+        persons: [
+          'Маковей Никита',
+          'Романенкова Людмила',
+          'Лоншакова Анастасия',
+          'Ващенко Светлана',
+          'Гасанова Сабина',
+        ],
+        aboutDialog: false,
+        infoDialog: false,
 
         infoObject: {
           countChannels: null,
@@ -311,7 +243,8 @@
               if (cnt === 9) {
                 let dateBeforeSpace = (infoObject.startDate).split('-');
                 let dateAfterSpace = ((delta[0].split('.'))[0]).split(':');
-                let time = infoObject.countSteps * (1.0 / infoObject.countGiges);
+                let time = 1000 * (infoObject.countSteps * (1.0 / infoObject.countGiges));
+                console.log(time);
 
                 let year = Number(dateBeforeSpace[2]);
                 let month = Number(dateBeforeSpace[1]);
@@ -321,18 +254,22 @@
                 let second = Number(dateAfterSpace[2]);
 
                 let startDate = new Date(year, month, day, hour, minute, second);
-                let endDate = new Date();
-                endDate.setSeconds(startDate.getSeconds() + parseInt(time.toString()));
+                let endDate = new Date(year, month, day, hour, minute, second);
+                endDate.setSeconds(endDate.getSeconds(), parseInt(time.toString()));
 
                 infoObject.startDate = startDate;
                 infoObject.endDate = endDate;
 
-                let difference = new Date(endDate - startDate);
+                let difference = endDate - startDate;
 
-                infoObject.date.days = difference.getDay();
-                infoObject.date.hours = difference.getHours(); // - difference.getDay() * 24;
-                infoObject.date.minutes = difference.getMinutes(); // - difference.getHours() * 60;
-                infoObject.date.seconds = difference.getSeconds(); // - difference.getMinutes() * 60;
+                infoObject.date.days =
+                        parseInt((difference / (1000 * 60 * 60 * 24)).toString());
+                infoObject.date.hours =
+                        parseInt(((difference / (1000 * 60 * 60)) % 24).toString());
+                infoObject.date.minutes =
+                        parseInt(((difference / (1000 * 60)) % 60).toString());
+                infoObject.date.seconds =
+                        parseInt(((difference / 1000) % 60).toString());
               }
 
               if (cnt === 11) {
