@@ -20,7 +20,7 @@
         <v-list class="pa-0">
           <v-list-item>
             <v-list-item-title>
-              <input type="file" @change="loadFile">
+              <input type="file" @change="loadFile" accept=".txt">
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -143,17 +143,17 @@
           </v-card-title>
 
           <v-card-text>
-            <p class="mb-1">Общее число каналов - {{ dialog_info === false ? null : null }}</p>
-            <p class="mb-1">Общее количество отсчетов - {{ dialog_info === false ? null : null }}</p>
-            <p class="mb-1">Частота дискретизации - {{ dialog_info === false ? null : null }}</p>
-            <p class="mb-1">Дата и время начала записи - {{ dialog_info === false ? null : null }}</p>
-            <p class="mb-1">Дата и время окончания записи - {{ dialog_info === false ? null : null }}</p>
+            <p class="mb-1">Общее число каналов - {{ infoObject.countChannels }}</p>
+            <p class="mb-1">Общее количество отсчетов - {{ infoObject.countSteps }}</p>
+            <p class="mb-1">Частота дискретизации - {{ infoObject.countGiges }}</p>
+            <p class="mb-1">Дата и время начала записи - {{ infoObject.startDate }}</p>
+            <p class="mb-1">Дата и время окончания записи - {{ infoObject.endDate }}</p>
             <p class="mb-1">
               Длительность:
-              {{ dialog_info === false ? null : null }} - суток,
-              {{ dialog_info === false ? null : null }} - часов,
-              {{ dialog_info === false ? null : null }} - минут,
-              {{ dialog_info === false ? null : null }} - секунд
+              {{ infoObject.date.days }} - суток,
+              {{ infoObject.date.hours }} - часов,
+              {{ infoObject.date.minutes }} - минут,
+              {{ infoObject.date.seconds }} - секунд
             </p>
           </v-card-text>
 
@@ -173,7 +173,7 @@
               <tr v-for="(item, index) in $store.getters.NAMES" :key="item">
                 <td>{{ index + 1 }}</td>
                 <td>{{ item }}</td>
-                <td>{{ dialog_info === false ? null : null }}</td>
+                <td>{{ fileSource }}</td>
               </tr>
               </tbody>
             </template>
@@ -242,8 +242,8 @@
         infoObject: {
           countChannels: null,
           countSteps: null,
-          gige: null,
-          beginDate: null,
+          countGiges: null,
+          startDate: null,
           endDate: null,
           date: {
             days: null,
@@ -251,7 +251,9 @@
             minutes: null,
             seconds: null
           }
-        }
+        },
+
+        fileSource: null
 
       }
     },
@@ -263,12 +265,10 @@
         this.$store.dispatch('UPDATE_CHANNELS', null).then(() => {
           const file = e.target.files[0];
 
-          let file__type = file.type;
-          let file__name = file.name;
-          // TODO: set this to reactive data
-          localStorage.setItem('FILE_SOURCE', file__name);
+          let fileType = file.type;
+          this.fileSource = file.name;
 
-          if (file__type === "text/plain") {
+          if (fileType === "text/plain") {
             this.readFile(file);
           }
         });
@@ -278,66 +278,69 @@
         const reader = new FileReader();
         const store = this.$store;
         const vm = this;
+        let infoObject = this.infoObject;
         reader.onload = function() {
           let cnt = 0;
           const DATA = reader.result.split("\n").map(function (d) {
             let delta = d.split(" ");
             if (cnt < 12) {
-              //console.log(delta);
+
               if (cnt === 1) {
-                let count_channels = Number(delta[0]);
-                if (count_channels > 0 && count_channels !== null) {
-                  localStorage.setItem('FILE__COUNT_CHANNELS', count_channels);
-                  console.log(localStorage.getItem('FILE__COUNT_CHANNELS'));
-                  CHANNELS = new Array(localStorage.getItem('FILE__COUNT_CHANNELS'));
-                  for (let i = 0; i < localStorage.getItem('FILE__COUNT_CHANNELS'); i++) {
+                let countChannels = Number(delta[0]);
+                if (countChannels > 0 && countChannels !== null) {
+                  infoObject.countChannels = countChannels;
+                  CHANNELS = new Array(countChannels);
+                  for (let i = 0; i < countChannels; i++) {
                     CHANNELS[i] = new Array(0);
                   }
                 }
               }
+
               if (cnt ===  3) {
-                let count_steps = Number(delta[delta.length - 1]);
-                localStorage.setItem('FILE__COUNT_STEPS', count_steps);
-                console.log(localStorage.getItem('FILE__COUNT_STEPS'));
+                infoObject.countSteps = Number(delta[delta.length - 1]);
               }
+
               if (cnt === 5) {
-                let count_gige = Number(delta[delta.length - 1]);
-                localStorage.setItem('FILE__GIGE', count_gige);
-                console.log(localStorage.getItem('FILE__GIGE'));
+                infoObject.countGiges = Number(delta[delta.length - 1]);
               }
+
               if (cnt === 7) {
-                let date_first_part = delta[0];
-                localStorage.setItem('FILE__DATE_BEGIN', date_first_part);
-                console.log(localStorage.getItem('FILE__DATE_BEGIN'));
+                infoObject.startDate = delta[0];
               }
+
               if (cnt === 9) {
-                let date_second_part = delta[0];
-                let date_first_part = localStorage.getItem('FILE__DATE_BEGIN');
-                let date_array = date_second_part.split('.');
-                //date_first_part = date_array[2] + '-' + date_array[1] + '-' + date_array[0];
-                let date_str = date_first_part + ' ' + date_array[0];
-                let date__first = new Date(date_str);
-                console.log(date__first.toDateString());
-                localStorage.setItem('FILE__DATE_BEGIN', date_str);
-                console.log(localStorage.getItem('FILE__DATE_BEGIN'));
-                let time = localStorage.getItem('FILE__COUNT_STEPS') * (1 / localStorage.getItem('FILE__GIGE'));
-                //let date_1 = new Date(localStorage.getItem('FILE__DATE_BEGIN'));
-                console.log(date__first);
-                let date_2 = new Date();
-                date_2.setSeconds(date__first.getSeconds() + parseInt(time.toString()));
-                localStorage.setItem('FILE__DATE_END', date_2.toDateString());
-                console.log(localStorage.getItem('FILE__DATE_END'));
-                localStorage.setItem('FILE__DATE_INFO', (parseInt(time.toString())).toString());
-                console.log(localStorage.getItem('FILE__DATE_INFO'));
+                let dateBeforeSpace = (infoObject.startDate).split('-');
+                let dateAfterSpace = ((delta[0].split('.'))[0]).split(':');
+                let time = infoObject.countSteps * (1.0 / infoObject.countGiges);
+
+                let year = Number(dateBeforeSpace[2]);
+                let month = Number(dateBeforeSpace[1]);
+                let day = Number(dateBeforeSpace[0]);
+                let hour = Number(dateAfterSpace[0]);
+                let minute = Number(dateAfterSpace[1]);
+                let second = Number(dateAfterSpace[2]);
+
+                let startDate = new Date(year, month, day, hour, minute, second);
+                let endDate = new Date();
+                endDate.setSeconds(startDate.getSeconds() + parseInt(time.toString()));
+
+                infoObject.startDate = startDate;
+                infoObject.endDate = endDate;
+
+                let difference = new Date(endDate - startDate);
+
+                infoObject.date.days = difference.getDay();
+                infoObject.date.hours = difference.getHours(); // - difference.getDay() * 24;
+                infoObject.date.minutes = difference.getMinutes(); // - difference.getHours() * 60;
+                infoObject.date.seconds = difference.getSeconds(); // - difference.getMinutes() * 60;
               }
+
               if (cnt === 11) {
                 const CHANNELS_NAMES = d.split(";");
-                store.dispatch('UPDATE_CHANNEL_NAMES', CHANNELS_NAMES).then(() => {
-                  //
-                })
+                store.dispatch('UPDATE_CHANNEL_NAMES', CHANNELS_NAMES);
               }
             } else {
-              for (let i = 0; i < localStorage.getItem('FILE__COUNT_CHANNELS'); i++) {
+              for (let i = 0; i < infoObject.countChannels; i++) {
                 CHANNELS[i].push(Number(delta[i]));
               }
             }
@@ -350,7 +353,7 @@
         reader.readAsText(file);
       },
       drawChannels: function() {
-        //console.log(this.$store.getters.CHANNELS);
+        // TODO: something...
       }
     }
   }
