@@ -29,7 +29,10 @@
 
       <span @click.stop="infoDialog = fileSource!==null">Инструменты</span>
 
-      <v-dialog v-model="aboutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <v-dialog
+              v-model="aboutDialog" fullscreen
+              hide-overlay transition="dialog-bottom-transition"
+      >
         <template v-slot:activator="{ on }">
           <span v-on="on">Справка</span>
         </template>
@@ -137,8 +140,11 @@
           <template v-if="this.$store.getters.CHANNELS !== null">
             <div style="width: 201px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
               <v-subheader class="ma-0 pa-2 title ">Каналы</v-subheader>
-              <v-row v-for="(data, index) in this.$store.getters.CHANNELS" :key="index" class="pa-0 ma-0">
-                <channel-component :chartData="data" :chartName="($store.getters.NAMES)[index]">
+              <v-row
+                      v-for="(data, index) in this.$store.getters.CHANNELS"
+                      :key="index" class="pa-0 ma-0"
+              >
+                <channel-component :chartData="data" :chartName="($store.getters.NAMES)[index]" :chartId="index">
                 </channel-component>
               </v-row>
             </div>
@@ -153,6 +159,8 @@
 
 <script>
   import ChannelComponent from "@/components/ChannelComponent";
+  import { VueContext } from 'vue-context'
+  import 'vue-context/src/sass/vue-context.scss';
 
   export default {
     name: "ComputerGraphicsComponent",
@@ -161,6 +169,10 @@
     },
     data() {
       return {
+        viewMenu: false,
+        top: '0px',
+        left: '0px',
+
         persons: [
           'Маковей Никита',
           'Романенкова Людмила',
@@ -190,6 +202,32 @@
       }
     },
     methods: {
+      setMenu: function(top, left) {
+        let largestHeight = window.innerHeight - this.$$.right.offsetHeight - 25;
+        let largestWidth = window.innerWidth - this.$$.right.offsetWidth - 25;
+
+        if (top > largestHeight) top = largestHeight;
+
+        if (left > largestWidth) left = largestWidth;
+
+        this.top = top + 'px';
+        this.left = left + 'px';
+      },
+
+      closeMenu: function() {
+        this.viewMenu = false;
+      },
+
+      openMenu: function(e) {
+        this.viewMenu = true;
+
+        Vue.nextTick(function() {
+          this.$$.right.focus();
+
+          this.setMenu(e.y, e.x)
+        }.bind(this));
+        e.preventDefault();
+      },
       showInfo: function () {
 
       },
