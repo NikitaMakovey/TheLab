@@ -127,6 +127,48 @@
         </v-card>
       </v-dialog>
 
+      <!-- OSCILOGRAMM DIALOG -->
+      <v-dialog
+              v-model="oscDialog"
+              max-width="600"
+              hide-overlay
+              persistent
+      >
+        <v-card>
+          <v-toolbar dark color="black">
+            <v-toolbar-title>Осцилограмма</v-toolbar-title>
+            <v-spacer></v-spacer>
+          </v-toolbar>
+          <v-list three-line subheader>
+            <div>
+              <v-list-item-content>
+                <v-list-item-title class="title text--accent-3">
+
+                </v-list-item-title>
+                <v-list-item-action>
+                  <canvas
+                          height="100" width="200"
+                          style="border: 1px solid black; padding: 1px;"
+                          ref="canvas"
+                  ></canvas>
+                </v-list-item-action>
+              </v-list-item-content>
+            </div>
+          </v-list>
+
+          <v-card-actions class="pa-4 ma-0">
+            <v-spacer></v-spacer>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="oscDialog = false"
+            >
+              ЗАКРЫТЬ
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-spacer></v-spacer>
     </v-system-bar>
 
@@ -169,9 +211,7 @@
     },
     data() {
       return {
-        viewMenu: false,
-        top: '0px',
-        left: '0px',
+        oscDialog: false,
 
         persons: [
           'Маковей Никита',

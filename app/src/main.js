@@ -5,9 +5,6 @@ import store from './store';
 import vuetify from '@/plugins/vuetify';
 const moment = require('moment');
 require('moment/locale/ru');
-import VueSimpleContextMenu from 'vue-simple-context-menu';
-
-Vue.component('vue-simple-context-menu', VueSimpleContextMenu);
 
 Vue.use(require('vue-moment'), {
   moment
