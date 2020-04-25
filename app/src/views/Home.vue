@@ -129,7 +129,7 @@
 
       <!-- OSCILOGRAMM DIALOG -->
       <v-dialog
-              v-model="oscDialog"
+              v-model="this.$store.getters.OSC_DIALOG"
               max-width="600"
               hide-overlay
               persistent
@@ -140,17 +140,15 @@
             <v-spacer></v-spacer>
           </v-toolbar>
           <v-list three-line subheader>
-            <div>
-              <v-list-item-content>
-                <v-list-item-title class="title text--accent-3">
-
-                </v-list-item-title>
-                <v-list-item-action>
-                  <canvas
-                          height="100" width="200"
-                          style="border: 1px solid black; padding: 1px;"
-                          ref="canvas"
-                  ></canvas>
+            <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
+              <v-list-item-content class="pa-0 ma-0">
+                <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
+                <v-list-item-action class="pa-2 ma-0">
+                  <osc-component
+                    :chartData="$store.getters.OSC_CHANNELS[index]" :chartName="$store.getters.NAMES[item]"
+                    :chartId="item"
+                  >
+                  </osc-component>
                 </v-list-item-action>
               </v-list-item-content>
             </div>
@@ -161,7 +159,7 @@
             <v-btn
               color="green darken-1"
               text
-              @click="oscDialog = false"
+              @click="$store.dispatch('UPDATE_OSC_DIALOG', false)"
             >
               ЗАКРЫТЬ
             </v-btn>
@@ -186,7 +184,10 @@
                       v-for="(data, index) in this.$store.getters.CHANNELS"
                       :key="index" class="pa-0 ma-0"
               >
-                <channel-component :chartData="data" :chartName="($store.getters.NAMES)[index]" :chartId="index">
+                <channel-component
+                        :chartData="data" :chartName="$store.getters.NAMES[index]"
+                        :chartId="index"
+                >
                 </channel-component>
               </v-row>
             </div>
@@ -201,18 +202,16 @@
 
 <script>
   import ChannelComponent from "@/components/ChannelComponent";
-  import { VueContext } from 'vue-context'
-  import 'vue-context/src/sass/vue-context.scss';
+  import OscComponent from "@/components/OscComponent";
 
   export default {
     name: "ComputerGraphicsComponent",
     components: {
-      'channel-component' : ChannelComponent
+      'channel-component' : ChannelComponent,
+      'osc-component' : OscComponent,
     },
     data() {
       return {
-        oscDialog: false,
-
         persons: [
           'Маковей Никита',
           'Романенкова Людмила',
@@ -242,34 +241,8 @@
       }
     },
     methods: {
-      setMenu: function(top, left) {
-        let largestHeight = window.innerHeight - this.$$.right.offsetHeight - 25;
-        let largestWidth = window.innerWidth - this.$$.right.offsetWidth - 25;
-
-        if (top > largestHeight) top = largestHeight;
-
-        if (left > largestWidth) left = largestWidth;
-
-        this.top = top + 'px';
-        this.left = left + 'px';
-      },
-
-      closeMenu: function() {
-        this.viewMenu = false;
-      },
-
-      openMenu: function(e) {
-        this.viewMenu = true;
-
-        Vue.nextTick(function() {
-          this.$$.right.focus();
-
-          this.setMenu(e.y, e.x)
-        }.bind(this));
-        e.preventDefault();
-      },
       showInfo: function () {
-
+        //
       },
       loadFile: function (e) {
         this.$store.dispatch('UPDATE_CHANNELS', null).then(() => {
@@ -284,6 +257,8 @@
         });
       },
       readFile: function (file) {
+        this.$store.dispatch('CLEAR_OSC');
+        this.$store.dispatch('UPDATE_OSC_DIALOG', false);
         let CHANNELS = null;
         const reader = new FileReader();
         const store = this.$store;

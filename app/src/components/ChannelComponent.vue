@@ -1,11 +1,15 @@
 <template>
-    <div id="app" @contextmenu.prevent="$refs.menu.open">
+    <div @contextmenu.prevent="$refs.menu.open">
         <vue-context ref="menu">
             <li @click="eventHandle(chartId)">
                 <span><b>осцилограмма</b></span>
             </li>
         </vue-context>
-        <canvas height="100" width="200" style="border: 1px solid black; padding: 1px;" ref="canvas"></canvas>
+        <canvas
+            height="100" width="200"
+            style="border: 1px solid black; padding: 1px;"
+            ref="canvas"
+        ></canvas>
     </div>
 </template>
 
@@ -17,7 +21,7 @@
     export default {
         data() {
             return {
-                oscDialog: false
+                //
             }
         },
         components: {
@@ -56,7 +60,18 @@
         methods: {
             eventHandle: function (key, event) {
                 console.log(key);
-                this.oscDialog = true;
+                let ids = this.$store.getters.IDS;
+                let is_pushed = false;
+                for (let i = 0; i !== ids.length; i++) {
+                    if (ids[i] === key) is_pushed = true;
+                }
+
+                if (!is_pushed) {
+                    this.$store.dispatch('UPDATE_IDS', key);
+                    this.$store.dispatch('UPDATE_OSC_CHANNELS', this.$store.getters.CHANNELS[key]);
+                }
+
+                this.$store.dispatch('UPDATE_OSC_DIALOG', true);
             }
         },
         
