@@ -22,6 +22,10 @@ export default {
         },
         REFRESH_OSC_DIALOG: (state, payload) => {
             state.OSC_DIALOG = payload
+        },
+        REMOVE_ITEM: (state, payload) => {
+            state.OSC_CHANNELS.splice(payload, 1);
+            state.IDS.splice(payload, 1);
         }
     },
     actions: {
@@ -47,6 +51,12 @@ export default {
             return new Promise(resolve => {
                 context.commit('REFRESH_OSC');
                 resolve([]);
+            });
+        },
+        DELETE_ITEM_FROM_OSC(context, data) {
+            return new Promise(resolve => {
+                context.commit('REMOVE_ITEM', data);
+                resolve(data);
             });
         }
     }

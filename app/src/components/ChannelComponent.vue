@@ -1,8 +1,8 @@
 <template>
     <div @contextmenu.prevent="$refs.menu.open">
-        <vue-context ref="menu">
+        <vue-context ref="menu" class="px-0">
             <li @click="eventHandle(chartId)">
-                <span><b>осцилограмма</b></span>
+                <a href="#"><b>осцилограмма</b></a>
             </li>
         </vue-context>
         <canvas

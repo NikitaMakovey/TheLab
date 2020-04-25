@@ -139,20 +139,23 @@
             <v-toolbar-title>Осцилограмма</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
-          <v-list three-line subheader>
-            <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
-              <v-list-item-content class="pa-0 ma-0">
-                <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
-                <v-list-item-action class="pa-2 ma-0">
-                  <osc-component
-                    :chartData="$store.getters.OSC_CHANNELS[index]" :chartName="$store.getters.NAMES[item]"
-                    :chartId="item"
-                  >
-                  </osc-component>
-                </v-list-item-action>
-              </v-list-item-content>
-            </div>
-          </v-list>
+
+          <template v-if="this.$store.getters.OSC_CHANNELS !== []">
+            <v-list three-line subheader>
+              <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
+                <v-list-item-content class="pa-0 ma-0">
+                  <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
+                  <v-list-item-action class="pa-2 ma-0">
+                    <osc-component
+                      :chartData="$store.getters.OSC_CHANNELS[item]" :chartName="$store.getters.NAMES[item]"
+                      :chartId="item"
+                    >
+                    </osc-component>
+                  </v-list-item-action>
+                </v-list-item-content>
+              </div>
+            </v-list>
+          </template>
 
           <v-card-actions class="pa-4 ma-0">
             <v-spacer></v-spacer>
