@@ -7,7 +7,9 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.9.17",
     "chart.js": "^2.9.3",
+    "chartjs-plugin-streaming": "^1.8.0",
     "core-js": "^3.6.4",
     "moment": "latest",
     "vue": "^2.6.11",

@@ -1,83 +1,68 @@
 <template>
-    <div @contextmenu.prevent="$refs.menu.open">
-        <vue-context ref="menu" class="px-0">
-            <li @click="closeHandle(chartId)">
-                <a href="#"><b>закрыть</b></a>
-            </li>
-            <v-divider/>
-            <li>
-                <a
-                    style="text-decoration-line: none; color: black"
-                    href="https://rt.pornhub.com/view_video.php?viewkey=ph5e41af8a75f58"
-                ><b>показать nudes 🔥😍💦</b></a>
-            </li>
-            <li>
-                <a
-                        style="text-decoration-line: none; color: black"
-                        href="https://rt.pornhub.com/view_video.php?viewkey=ph5e08eabf264fc"
-                ><b>показать anal 🍑👉🏿👌💦</b></a>
-            </li>
-            <li @click="closeDialog">
-                <a href="#"><b>выйти погулять 👑🦠</b></a>
-            </li>
-        </vue-context>
-        <canvas
-            style="border: 1px solid black; padding: 1px;"
-            ref="canvas" height="150px" width="560px"
-        ></canvas>
-    </div>
+    <div class="chartdiv" :id="'chartdiv'+chartId"></div>
 </template>
 
 <script>
-    import { Line, mixins } from 'vue-chartjs';
-    import { VueContext } from 'vue-context'
-    import 'vue-context/src/sass/vue-context.scss';
+    import * as am4core from "@amcharts/amcharts4/core";
+    import * as am4charts from "@amcharts/amcharts4/charts";
+    import am4themes_dataviz from "@amcharts/amcharts4/themes/dataviz";
+    import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
     export default {
-        components: {
-            VueContext
-        },
         data() {
             return {
-                //
+                index: 0
             }
         },
-        extends: Line,
-        props: ['chartData', 'chartName', 'chartId'],
-        mixins: [mixins.reactiveProp],
+        props: [
+            'chartData', 'chartName',
+            'chartId', 'countSteps',
+            'timeValue', 'firstDate'
+        ],
         mounted () {
-            this.renderChart({
-                labels: this.chartData,
-                datasets: [
-                    {
-                        pointRadius: 0,
-                        label: this.chartName,
-                        data: this.chartData,
-                        pointStyle: 'line',
-                        borderWidth: 1,
-                        borderColor: 'black',
-                        backgroundColor: 'white',
-                    }
-                ]
-            },
-            {
-                scales:{
-                    xAxes: [{
-                        display: false
-                    }],
-                    yAxes: [{
-                        display: false
-                    }]
-                },
-                responsive: true
-            });
+            am4core.useTheme(am4themes_dataviz);
+            am4core.useTheme(am4themes_animated);
+            // this.chartName
+            // this.chartData
+            let chartDiv = 'chartdiv' + this.chartId;
+            let chart = am4core.create(chartDiv, am4charts.XYChart);
+
+            const vm = this;
+            chart.data = vm.generateChartData(this.$store.getters.OSC_CHANNELS[this.chartId]);
+
+            let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            dateAxis.renderer.minGridDistance = 50;
+
+            let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            let series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.valueY = "y";
+            series.dataFields.dateX = "x";
+            series.strokeWidth = 2;
+            series.minBulletDistance = 1;
+            series.tooltipText = "{valueY}";
+            series.tooltip.pointerOrientation = "vertical";
+            series.tooltip.background.cornerRadius = 20;
+            series.tooltip.background.fillOpacity = 0.5;
+            series.tooltip.label.padding(12,12,12,12);
+
+            chart.scrollbarX = new am4charts.XYChartScrollbar();
+            chart.scrollbarX.series.push(series);
+
+            chart.cursor = new am4charts.XYCursor();
+            chart.cursor.xAxis = dateAxis;
+            chart.cursor.snapToSeries = series;
         },
         methods: {
-            closeHandle: function (key, event) {
-                this.$store.dispatch('DELETE_ITEM_FROM_OSC', key);
-            },
-            closeDialog: function (event) {
-                this.$store.dispatch('UPDATE_OSC_DIALOG', false);
+            generateChartData: function(data) {
+                let chartData = [];
+                for (let i = 0; i < this.countSteps; i++) {
+                    chartData.push({
+                        x: this.timeValue * i,
+                        y: data[i]
+                    });
+                }
+                return chartData;
             }
         },
 
@@ -86,5 +71,8 @@
 </script>
 
 <style scoped>
-
+.chartdiv {
+    width: 100%;
+    height: 350px;
+}
 </style>

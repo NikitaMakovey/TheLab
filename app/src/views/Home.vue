@@ -12,11 +12,9 @@
 
       <v-menu bottom offset-y>
         <template v-slot:activator="{ on }">
-                    <span
-                            v-on="on"
-                    >
-                        Файл
-                    </span>
+          <span v-on="on">
+              Файл
+          </span>
         </template>
         <v-list class="pa-0">
           <v-list-item>
@@ -27,7 +25,52 @@
         </v-list>
       </v-menu>
 
-      <span @click.stop="infoDialog = fileSource!==null">Инструменты</span>
+      <v-menu bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">
+              Инструменты
+          </span>
+        </template>
+        <v-list class="pa-0">
+          <v-list-item>
+            <v-list-item-title
+              @click.stop="infoDialog = fileSource!==null"
+            >
+              Инфо
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title
+              @click.stop=""
+            >
+              Фрагмент
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">
+              Осциллограммы
+          </span>
+        </template>
+        <v-list class="pa-0" v-for="(item, index) in this.$store.getters.NAMES" :key="index">
+
+          <v-list-item class="pa-0">
+            <v-list-item-title class="pa-0">
+              <v-checkbox
+                class="pa-2"
+                @change="menuClickHandle(index)"
+                v-model="menuItems"
+                :value="item"
+                :label="item"
+              ></v-checkbox>
+            </v-list-item-title>
+          </v-list-item>
+
+        </v-list>
+      </v-menu>
 
       <v-dialog
               v-model="aboutDialog" fullscreen
@@ -148,7 +191,8 @@
                   <v-list-item-action class="pa-2 ma-0">
                     <osc-component
                       :chartData="$store.getters.OSC_CHANNELS[item]" :chartName="$store.getters.NAMES[item]"
-                      :chartId="item"
+                      :chartId="item" :countSteps="infoObject.countSteps" :timeValue="1000.0/infoObject.countGiges"
+                      :firstDate="infoObject.startDate"
                     >
                     </osc-component>
                   </v-list-item-action>
@@ -215,6 +259,7 @@
     },
     data() {
       return {
+        menuItems: [],
         persons: [
           'Маковей Никита',
           'Романенкова Людмила',
@@ -244,6 +289,43 @@
       }
     },
     methods: {
+      menuStatusHandle: function (key) {
+        let ids = this.$store.getters.IDS;
+        let is_pushed = false;
+        for (let i = 0; i !== ids.length; i++) {
+          if (ids[i] === key) is_pushed = true;
+        }
+        return is_pushed;
+      },
+      menuClickHandle: function (key, event) {
+        if (this.menuStatusHandle(key)) {
+          this.menuCloseHandle(key, event);
+        } else {
+          this.menuEventHandle(key, event);
+        }
+      },
+      menuCloseHandle: function (key, event) {
+        this.$store.dispatch('DELETE_ITEM_FROM_OSC', key).then(() => {
+          if (this.$store.getters.IDS.length === 0) {
+            this.$store.dispatch('UPDATE_OSC_DIALOG', false);
+          }
+        })
+      },
+      menuEventHandle: function (key, event) {
+        console.log(key);
+        let ids = this.$store.getters.IDS;
+        let is_pushed = false;
+        for (let i = 0; i !== ids.length; i++) {
+          if (ids[i] === key) is_pushed = true;
+        }
+
+        if (!is_pushed) {
+          this.$store.dispatch('UPDATE_IDS', key);
+          this.$store.dispatch('UPDATE_OSC_CHANNELS', this.$store.getters.CHANNELS[key]);
+        }
+
+        this.$store.dispatch('UPDATE_OSC_DIALOG', true);
+      },
       showInfo: function () {
         //
       },
@@ -348,6 +430,9 @@
       drawChannels: function() {
         // TODO: something...
       }
+    },
+    computed: {
+      //
     }
   }
 </script>
