@@ -415,8 +415,12 @@
                 store.dispatch('UPDATE_CHANNEL_NAMES', CHANNELS_NAMES);
               }
             } else {
+              let tmp = (1.0 / infoObject.countGiges);
               for (let i = 0; i < infoObject.countChannels; i++) {
-                CHANNELS[i].push(Number(delta[i]));
+                CHANNELS[i].push({
+                  x: tmp * i,
+                  y: Number(delta[i])
+                });
               }
             }
             cnt++;

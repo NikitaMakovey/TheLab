@@ -2,7 +2,7 @@
     <div @contextmenu.prevent="$refs.menu.open">
         <vue-context ref="menu" class="px-0">
             <li @click="eventHandle(chartId)">
-                <a href="#"><b>осцилограмма</b></a>
+                <a href="#"><b>осциллограмма</b></a>
             </li>
         </vue-context>
         <canvas
@@ -32,7 +32,7 @@
         mixins: [mixins.reactiveProp],
         mounted () {
             this.renderChart({
-                    labels: this.chartData,
+                    labels: this.chartName,
                     datasets: [
                         {
                             pointRadius: 0,
