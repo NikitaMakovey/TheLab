@@ -3,12 +3,15 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 import vuetify from '@/plugins/vuetify';
-const moment = require('moment');
-require('moment/locale/ru');
+import VueMoment from "vue-moment";
+import moment from "moment";
 
-Vue.use(require('vue-moment'), {
+moment.locale('ru');
+
+Vue.use(VueMoment, {
   moment
 });
+
 Vue.config.productionTip = false;
 
 new Vue({
