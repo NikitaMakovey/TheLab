@@ -8,7 +8,6 @@
                 <a href="#"><b>выйти</b></a>
             </li>
         </vue-context>
-        <span>{{ chartName }}</span>
         <div class="chartdiv" :id="'chartdiv'+chartId"></div>
     </div>
 </template>
@@ -43,7 +42,8 @@
             let chartDiv = 'chartdiv' + this.chartId;
             let chart = am4core.create(chartDiv, am4charts.XYChart);
 
-            chart.data = this.$store.getters.OSC_CHANNELS[this.chartId];
+            const vm = this;
+            chart.data = vm.generateChartData(this.$store.getters.OSC_CHANNELS[this.chartId]);
 
             let timeAxis = chart.xAxes.push(new am4charts.ValueAxis());
             timeAxis.renderer.minGridDistance = 50;
@@ -70,6 +70,17 @@
             // TODO: smth
         },
         methods: {
+            generateChartData: function(data) {
+                let chartData = [];
+                for (let i = 0; i < this.countSteps; i++) {
+                    console.log(chartData);
+                    chartData.push({
+                        x: (this.timeValue / 1000) * i,
+                        y: data[i]
+                    });
+                }
+                return chartData;
+            },
             closeHandle: function(key) {
                 this.$store.dispatch('DELETE_ITEM_FROM_OSC', key);
             },

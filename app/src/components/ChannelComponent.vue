@@ -32,7 +32,7 @@
         mixins: [mixins.reactiveProp],
         mounted () {
             this.renderChart({
-                    labels: this.chartName,
+                    labels: this.chartData,
                     datasets: [
                         {
                             pointRadius: 0,
