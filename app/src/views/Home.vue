@@ -10,211 +10,247 @@
     </v-system-bar>
     <v-system-bar window light style="overflow-x: scroll">
 
-      <v-menu bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-              Файл
-          </span>
-        </template>
-        <v-list class="pa-0">
-          <v-list-item>
-            <v-list-item-title>
-              <input type="file" @change="loadFile" accept=".txt">
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-              Инструменты
-          </span>
-        </template>
-        <v-list class="pa-0">
-          <v-list-item>
-            <v-list-item-title
-              @click.stop="infoDialog = fileSource!==null"
-            >
-              Инфо
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title
-              @click.stop=""
-            >
-              Фрагмент
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-menu bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <span v-on="on">
-              Осциллограммы
-          </span>
-        </template>
-        <v-list class="pa-0" v-for="(item, index) in this.$store.getters.NAMES" :key="index">
-
-          <v-list-item class="pa-0">
-            <v-list-item-title class="pa-0">
-              <v-checkbox
-                class="pa-2"
-                @change="menuClickHandle(index)"
-                v-model="menuItems"
-                :value="item"
-                :label="item"
-              ></v-checkbox>
-            </v-list-item-title>
-          </v-list-item>
-
-        </v-list>
-      </v-menu>
-
-      <v-dialog
-              v-model="aboutDialog" fullscreen
-              hide-overlay transition="dialog-bottom-transition"
-      >
-        <template v-slot:activator="{ on }">
-          <span v-on="on">Справка</span>
-        </template>
-        <v-card>
-          <v-toolbar dark color="black">
-            <v-btn icon dark @click="aboutDialog = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-toolbar-title>Справка</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-toolbar-items>
-              <v-btn dark text @click="aboutDialog = false">Закрыть</v-btn>
-            </v-toolbar-items>
-          </v-toolbar>
-          <v-list three-line subheader>
-            <v-subheader class="title">Система визуализации многоканальных сигналов</v-subheader>
-            <div>
-              <v-list-item-content>
-                <v-list-item-title class="title text--accent-3">Группа: Б8118-01.03.02систпро</v-list-item-title>
-                <v-list-item-subtitle></v-list-item-subtitle>
-              </v-list-item-content>
-            </div>
-            <div v-for="(person, i) in persons" :key="i" class="ma-0 pa-0">
-              <v-list-item-content class="ma-0 pa-1">
-                <v-list-item-title class="ma-0 pa-0 title text--secondary">{{ person }}</v-list-item-title>
-              </v-list-item-content>
-            </div>
-          </v-list>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog
-              v-model="infoDialog"
-              max-width="600"
-      >
-        <v-card>
-          <v-card-title class="headline" style="font-size: 1rem !important;">
-            Текущее состояние многоканального сигнала
-          </v-card-title>
-
-          <v-card-text>
-            <p class="mb-1">Общее число каналов - {{ infoObject.countChannels }}</p>
-            <p class="mb-1">Общее количество отсчетов - {{ infoObject.countSteps }}</p>
-            <p class="mb-1">Частота дискретизации - {{ infoObject.countGiges }}</p>
-            <p class="mb-1">Дата и время начала записи - {{ $moment(infoObject.startDate).format('LLL') }}</p>
-            <p class="mb-1">Дата и время окончания записи - {{ $moment(infoObject.endDate).format('LLL') }}</p>
-            <p class="mb-1">
-              Длительность:
-              {{ infoObject.date.days }} - суток,
-              {{ infoObject.date.hours }} - часов,
-              {{ infoObject.date.minutes }} - минут,
-              {{ infoObject.date.seconds }} - секунд
-            </p>
-          </v-card-text>
-
-          <v-simple-table dark>
-            <v-data-table-header>
-              Информация о каналах
-            </v-data-table-header>
-            <template v-slot:default>
-              <thead>
-              <tr>
-                <th class="text-center">№</th>
-                <th class="text-center">Имя</th>
-                <th class="text-center">Источник</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(item, index) in $store.getters.NAMES" :key="item">
-                <td>{{ index + 1 }}</td>
-                <td>{{ item }}</td>
-                <td>{{ fileSource }}</td>
-              </tr>
-              </tbody>
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Файл
+                </span>
             </template>
-          </v-simple-table>
-
-          <v-card-text>
-          </v-card-text>
-
-          <v-card-actions class="pa-4 ma-0">
-            <v-spacer></v-spacer>
-
-            <v-btn
-                    color="green darken-1"
-                    text
-                    @click="infoDialog = false"
-            >
-              ОК
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <!-- OSCILOGRAMM DIALOG -->
-      <v-dialog
-              v-model="this.$store.getters.OSC_DIALOG"
-              max-width="600"
-              hide-overlay
-              persistent
-      >
-        <v-card>
-          <v-toolbar dark color="black">
-            <v-toolbar-title>Осцилограмма</v-toolbar-title>
-            <v-spacer></v-spacer>
-          </v-toolbar>
-
-          <template v-if="this.$store.getters.OSC_CHANNELS !== []">
-            <v-list three-line subheader>
-              <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
-                <v-list-item-content class="pa-0 ma-0">
-                  <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
-                  <v-list-item-action class="pa-2 ma-0">
-                    <osc-component
-                      :chartData="$store.getters.OSC_CHANNELS[item]" :chartName="$store.getters.NAMES[item]"
-                      :chartId="item" :countSteps="infoObject.countSteps" :timeValue="1000.0/infoObject.countGiges"
-                      :firstDate="infoObject.startDate"
-                    >
-                    </osc-component>
-                  </v-list-item-action>
-                </v-list-item-content>
-              </div>
+            <v-list class="pa-0">
+                <v-list-item>
+                    <v-list-item-title>
+                        <input type="file" @change="loadFile" accept=".txt">
+                    </v-list-item-title>
+                </v-list-item>
             </v-list>
-          </template>
+        </v-menu>
 
-          <v-card-actions class="pa-4 ma-0">
-            <v-spacer></v-spacer>
-            <v-btn
-              color="green darken-1"
-              text
-              @click="$store.dispatch('UPDATE_OSC_DIALOG', false)"
-            >
-              ЗАКРЫТЬ
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Инструменты
+                </span>
+            </template>
+            <v-list class="pa-0">
+                <v-list-item>
+                    <v-list-item-title @click.stop="infoDialog = fileSource!==null">
+                        Инфо
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Фрагмент
+                    </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
 
-      <v-spacer></v-spacer>
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Осциллограммы
+                </span>
+            </template>
+            <v-list class="pa-0" v-for="(item, index) in this.$store.getters.NAMES" :key="index">
+
+                <v-list-item class="pa-0">
+                    <v-list-item-title class="pa-0">
+                        <v-checkbox class="pa-2"
+                                    @change="menuClickHandle(index)"
+                                    v-model="menuItems"
+                                    :value="item"
+                                    :label="item"></v-checkbox>
+                    </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Моделирование
+                </span>
+            </template>
+            <v-list class="pa-0">
+                <v-list-item>
+                    <v-list-item-title @click.stop="infoDialog = fileSource!==null">
+                        Задержанный единичный импульс
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Задержанный единичный скачок
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Дискретизированная убывающая экспонента
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Дискретизированная синусоида
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        «Mеандр» (прямоугольная решетка) с периодом L
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        “Пила” с периодом L
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Сигнал с экспоненциальной огибающей - амплитудная модуляция
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Сигнал с балансной огибающей - амплитудная модуляция
+                    </v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-title @click.stop="">
+                        Сигнал с тональной огибающей. - амплитудная модуляция
+                    </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+
+        <v-dialog v-model="aboutDialog" fullscreen
+                  hide-overlay transition="dialog-bottom-transition">
+            <template v-slot:activator="{ on }">
+                <span v-on="on">Справка</span>
+            </template>
+            <v-card>
+                <v-toolbar dark color="black">
+                    <v-btn icon dark @click="aboutDialog = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Справка</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                        <v-btn dark text @click="aboutDialog = false">Закрыть</v-btn>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <v-list three-line subheader>
+                    <v-subheader class="title">Система визуализации многоканальных сигналов</v-subheader>
+                    <div>
+                        <v-list-item-content>
+                            <v-list-item-title class="title text--accent-3">Группа: Б8118-01.03.02систпро</v-list-item-title>
+                            <v-list-item-subtitle></v-list-item-subtitle>
+                        </v-list-item-content>
+                    </div>
+                    <div v-for="(person, i) in persons" :key="i" class="ma-0 pa-0">
+                        <v-list-item-content class="ma-0 pa-1">
+                            <v-list-item-title class="ma-0 pa-0 title text--secondary">{{ person }}</v-list-item-title>
+                        </v-list-item-content>
+                    </div>
+                </v-list>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="infoDialog"
+                  max-width="600">
+            <v-card>
+                <v-card-title class="headline" style="font-size: 1rem !important;">
+                    Текущее состояние многоканального сигнала
+                </v-card-title>
+
+                <v-card-text>
+                    <p class="mb-1">Общее число каналов - {{ infoObject.countChannels }}</p>
+                    <p class="mb-1">Общее количество отсчетов - {{ infoObject.countSteps }}</p>
+                    <p class="mb-1">Частота дискретизации - {{ infoObject.countGiges }}</p>
+                    <p class="mb-1">Дата и время начала записи - {{ $moment(infoObject.startDate).format('LLL') }}</p>
+                    <p class="mb-1">Дата и время окончания записи - {{ $moment(infoObject.endDate).format('LLL') }}</p>
+                    <p class="mb-1">
+                        Длительность:
+                        {{ infoObject.date.days }} - суток,
+                        {{ infoObject.date.hours }} - часов,
+                        {{ infoObject.date.minutes }} - минут,
+                        {{ infoObject.date.seconds }} - секунд
+                    </p>
+                </v-card-text>
+
+                <v-simple-table dark>
+                    <v-data-table-header>
+                        Информация о каналах
+                    </v-data-table-header>
+                    <template v-slot:default>
+                        <thead>
+                            <tr>
+                                <th class="text-center">№</th>
+                                <th class="text-center">Имя</th>
+                                <th class="text-center">Источник</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in $store.getters.NAMES" :key="item">
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ item }}</td>
+                                <td>{{ fileSource }}</td>
+                            </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+
+                <v-card-text>
+                </v-card-text>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+
+                    <v-btn color="green darken-1"
+                           text
+                           @click="infoDialog = false">
+                        ОК
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- OSCILOGRAMM DIALOG -->
+        <v-dialog v-model="this.$store.getters.OSC_DIALOG"
+                  max-width="600"
+                  hide-overlay
+                  persistent>
+            <v-card>
+                <v-toolbar dark color="pink">
+                    <v-toolbar-title>Осцилограмма</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                </v-toolbar>
+
+                <template v-if="this.$store.getters.OSC_CHANNELS !== []">
+                    <v-list three-line subheader>
+                        <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
+                            <v-list-item-content class="pa-0 ma-0">
+                                <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
+                                <v-list-item-action class="pa-2 ma-0">
+                                    <osc-component :chartData="$store.getters.OSC_CHANNELS[item]" :chartName="$store.getters.NAMES[item]"
+                                                   :chartId="item" :countSteps="infoObject.countSteps" :timeValue="1000.0/infoObject.countGiges"
+                                                   :firstDate="infoObject.startDate">
+                                    </osc-component>
+                                </v-list-item-action>
+                            </v-list-item-content>
+                        </div>
+                    </v-list>
+                </template>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1"
+                           text
+                           @click="$store.dispatch('UPDATE_OSC_DIALOG', false)">
+                        ЗАКРЫТЬ
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-spacer></v-spacer>
     </v-system-bar>
 
     <v-col cols="12">
