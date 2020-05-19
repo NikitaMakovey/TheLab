@@ -65,6 +65,7 @@
             </v-list>
         </v-menu>
 
+        <!-- TODO: Menu for modeling -->
         <v-menu bottom offset-y>
             <template v-slot:activator="{ on }">
                 <span v-on="on">
@@ -72,53 +73,56 @@
                 </span>
             </template>
             <v-list class="pa-0">
-                <v-list-item>
-                    <v-list-item-title @click.stop="infoDialog = fileSource!==null">
-                        Задержанный единичный импульс
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Задержанный единичный скачок
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Дискретизированная убывающая экспонента
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Дискретизированная синусоида
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        «Mеандр» (прямоугольная решетка) с периодом L
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        “Пила” с периодом L
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Сигнал с экспоненциальной огибающей - амплитудная модуляция
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Сигнал с балансной огибающей - амплитудная модуляция
-                    </v-list-item-title>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-title @click.stop="">
-                        Сигнал с тональной огибающей. - амплитудная модуляция
-                    </v-list-item-title>
-                </v-list-item>
+                <template v-for="(item, i) in generationFunctions">
+                    <v-list-item>
+                        <v-list-item-title style="text-align: left !important;">
+                            {{ item.name }}
+                        </v-list-item-title>
+                        <v-list-item-action>
+                            <v-btn dark class="ma-0 pa-1" @click="item.function">Запуск</v-btn>
+                        </v-list-item-action>
+                    </v-list-item>
+                    <v-divider></v-divider>
+                </template>
             </v-list>
         </v-menu>
+
+        <v-dialog v-model="generationFunctionDialog.status" max-width="600">
+            <v-card>
+                <v-card-title class="headline" style="font-size: 1rem !important;">
+                    {{ generationFunctionDialog.name }}
+                </v-card-title>
+
+                <v-simple-table style="background-color: #dbe1f9">
+                    <v-data-table-header>
+                        <span>Параметры для моделирования</span>
+                    </v-data-table-header>
+                    <template v-slot:default>
+                        <thead>
+                        <tr>
+                            <th class="text-center">Наименование</th>
+                            <th class="text-center">Значение</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(item, index) in generationFunctionDialog.params" :key="index">
+                            <td>{{ item.key }}</td>
+                            <td><input class="form-control" type="number" v-model="item.value"></td>
+                        </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+
+                    <v-btn color="green darken-1" text @click="generationFunctionDialog.function">
+                        ОК
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <!-- TODO: Menu for modeling END -->
 
         <v-dialog v-model="aboutDialog" fullscreen
                   hide-overlay transition="dialog-bottom-transition">
@@ -295,6 +299,50 @@
     },
     data() {
       return {
+        generationFunctionDialog: {
+          'status' : false,
+          'name' : '',
+          'function' : null,
+          'params' : [],
+        },
+        generationFunctions: [
+            {
+                'name' : 'Задержанный единичный импульс',
+                'function' : this.functionForModeling1,
+            },
+            {
+                'name' : 'Задержанный единичный скачок',
+                'function' : this.functionForModeling2,
+            },
+            {
+                'name' : 'Дискретизированная убывающая экспонента',
+                'function' : this.functionForModeling3,
+            },
+            {
+                'name' : 'Дискретизированная синусоида',
+                'function' : this.functionForModeling4,
+            },
+            {
+                'name' : '«Mеандр» (прямоугольная решетка) с периодом L',
+                'function' : this.functionForModeling5,
+            },
+            {
+                'name' : '“Пила” с периодом L',
+                'function' : this.functionForModeling6,
+            },
+            {
+                'name' : 'Сигнал с экспоненциальной огибающей - амплитудная модуляция',
+                'function' : this.functionForModeling7,
+            },
+            {
+                'name' : 'Сигнал с балансной огибающей - амплитудная модуляция',
+                'function' : this.functionForModeling8,
+            },
+            {
+                'name' : 'Сигнал с тональной огибающей. - амплитудная модуляция',
+                'function' : this.functionForModeling9,
+            },
+        ],
         menuItems: [],
         persons: [
           'Маковей Никита',
@@ -325,6 +373,46 @@
       }
     },
     methods: {
+      functionForModeling1: function (...params) {
+          this.generationFunctionDialog.name = this.generationFunctions[0].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'n0',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
+      },
+      functionForModeling2: function (...params) {
+          this.generationFunctionDialog.status = false;
+          console.log(params);
+      },
+      functionForModeling3: function (...params) {
+          console.log(params);
+      },
+      functionForModeling4: function (...params) {
+          console.log(params);
+      },
+      functionForModeling5: function (...params) {
+          console.log(params);
+      },
+      functionForModeling6: function (...params) {
+          console.log(params);
+      },
+      functionForModeling7: function (...params) {
+          console.log(params);
+      },
+      functionForModeling8: function (...params) {
+          console.log(params);
+      },
+      functionForModeling9: function (...params) {
+          console.log(params);
+      },
       menuStatusHandle: function (key) {
         let ids = this.$store.getters.IDS;
         let is_pushed = false;
