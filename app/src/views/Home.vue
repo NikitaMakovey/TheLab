@@ -373,7 +373,7 @@
       }
     },
     methods: {
-      functionForGeneration1: function(...params) {
+        functionForGeneration1: function(...params) {
           this.generationFunctionDialog.status = false;
           let n = 1 * this.generationFunctionDialog.params[0].value;
           let n0 = 1 * this.generationFunctionDialog.params[1].value;
@@ -386,8 +386,22 @@
               }
           }
           console.log(channelArray);
-      },
-      functionForModeling1: function (...params) {
+        },
+        functionForGeneration2: function(...params) {
+            this.generationFunctionDialog.status = false;
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let n0 = 1 * this.generationFunctionDialog.params[1].value;
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                if (i < n0) {
+                    channelArray.push(0);
+                } else {
+                    channelArray.push(1);
+                }
+            }
+            console.log(channelArray);
+        },
+        functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
           this.generationFunctionDialog.function = this.functionForGeneration1;
           this.generationFunctionDialog.params = [
@@ -401,10 +415,10 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling2: function (...params) {
+        },
+        functionForModeling2: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[1].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration2;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
@@ -416,8 +430,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling3: function (...params) {
+        },
+        functionForModeling3: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[2].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -431,8 +445,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling4: function (...params) {
+        },
+        functionForModeling4: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[3].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -454,8 +468,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling5: function (...params) {
+        },
+        functionForModeling5: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[4].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -469,8 +483,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling6: function (...params) {
+        },
+        functionForModeling6: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[5].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -484,8 +498,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling7: function (...params) {
+        },
+        functionForModeling7: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[6].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -519,8 +533,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling8: function (...params) {
+        },
+        functionForModeling8: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[7].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -554,8 +568,8 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
-      functionForModeling9: function (...params) {
+        },
+        functionForModeling9: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[8].name;
           this.generationFunctionDialog.function = this.functionForModeling2;
           this.generationFunctionDialog.params = [
@@ -593,7 +607,7 @@
               },
           ];
           this.generationFunctionDialog.status = true;
-      },
+        },
       menuStatusHandle: function (key) {
         let ids = this.$store.getters.IDS;
         let is_pushed = false;
