@@ -423,6 +423,59 @@
             }
             console.log(channelArray);
         },
+        functionForGeneration5: function(...params) {
+            this.generationFunctionDialog.status = false;
+            // if double value the {value} * 1.0
+            // if int value the {value} * 1
+            // if you will do it then you may use '===' instead of '=='
+            // it's javascript, babe :)
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                let result = 0; // calculate something...
+                channelArray.push(result);
+            }
+            console.log(channelArray);
+        },
+        functionForGeneration6: function(...params) {
+            this.generationFunctionDialog.status = false;
+            // ...
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                let result = 0; // calculate something...
+                channelArray.push(result);
+            }
+            console.log(channelArray);
+        },
+        functionForGeneration7: function(...params) {
+            this.generationFunctionDialog.status = false;
+            // ...
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                let result = 0; // calculate something...
+                channelArray.push(result);
+            }
+            console.log(channelArray);
+        },
+        functionForGeneration8: function(...params) {
+            this.generationFunctionDialog.status = false;
+            // ...
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                let result = 0; // calculate something...
+                channelArray.push(result);
+            }
+            console.log(channelArray);
+        },
+        functionForGeneration9: function(...params) {
+            this.generationFunctionDialog.status = false;
+            // ...
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                let result = 0; // calculate something...
+                channelArray.push(result);
+            }
+            console.log(channelArray);
+        },
         functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
           this.generationFunctionDialog.function = this.functionForGeneration1;
@@ -493,7 +546,7 @@
         },
         functionForModeling5: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[4].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration5;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
@@ -508,7 +561,7 @@
         },
         functionForModeling6: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[5].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration6;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
@@ -523,7 +576,7 @@
         },
         functionForModeling7: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[6].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration7;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'fd',
@@ -558,7 +611,7 @@
         },
         functionForModeling8: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[7].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration8;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'fd',
@@ -593,7 +646,7 @@
         },
         functionForModeling9: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[8].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration9;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'fd',
