@@ -389,29 +389,196 @@
           this.generationFunctionDialog.status = true;
       },
       functionForModeling2: function (...params) {
-          this.generationFunctionDialog.status = false;
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[1].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'n0',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling3: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[2].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'a',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling4: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[3].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'a',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C9',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C6',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling5: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[4].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'L',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling6: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[5].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'n',
+                  'value' : 0
+              },
+              {
+                  'key' : 'L',
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling7: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[6].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'fd',
+                  'value' : 0
+              },
+              {
+                  'key' : 'T',
+                  'value' : 0
+              },
+              {
+                  'key' : 't',
+                  'value' : 0
+              },
+              {
+                  'key' : 'a',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C4', //тетта
+                  'value' : 0
+              },
+              {
+                  'key' : 'f',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C6', //фи
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling8: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[7].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'fd',
+                  'value' : 0
+              },
+              {
+                  'key' : 'T',
+                  'value' : 0
+              },
+              {
+                  'key' : 't',
+                  'value' : 0
+              },
+              {
+                  'key' : 'a',
+                  'value' : 0
+              },
+              {
+                  'key' : 'f0',
+                  'value' : 0
+              },
+              {
+                  'key' : 'fн',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C6', //фи
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       functionForModeling9: function (...params) {
-          console.log(params);
+          this.generationFunctionDialog.name = this.generationFunctions[8].name;
+          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.params = [
+              {
+                  'key' : 'fd',
+                  'value' : 0
+              },
+              {
+                  'key' : 'T',
+                  'value' : 0
+              },
+              {
+                  'key' : 't',
+                  'value' : 0
+              },
+              {
+                  'key' : 'a',
+                  'value' : 0
+              },
+              {
+                  'key' : 'm',
+                  'value' : 0
+              },
+              {
+                  'key' : 'f0',
+                  'value' : 0
+              },
+              {
+                  'key' : 'fн',
+                  'value' : 0
+              },
+              {
+                  'key' : '\u03C6', //фи
+                  'value' : 0
+              },
+          ];
+          this.generationFunctionDialog.status = true;
       },
       menuStatusHandle: function (key) {
         let ids = this.$store.getters.IDS;
