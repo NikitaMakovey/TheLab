@@ -373,9 +373,23 @@
       }
     },
     methods: {
+      functionForGeneration1: function(...params) {
+          this.generationFunctionDialog.status = false;
+          let n = 1 * this.generationFunctionDialog.params[0].value;
+          let n0 = 1 * this.generationFunctionDialog.params[1].value;
+          let channelArray = [];
+          for (let i = 0; i <= n; i++) {
+              if (i === n0) {
+                  channelArray.push(1);
+              } else {
+                  channelArray.push(0);
+              }
+          }
+          console.log(channelArray);
+      },
       functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration1;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
