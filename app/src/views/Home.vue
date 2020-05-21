@@ -401,6 +401,28 @@
             }
             console.log(channelArray);
         },
+        functionForGeneration3: function(...params) {
+            this.generationFunctionDialog.status = false;
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let a = 1.0 * this.generationFunctionDialog.params[1].value;
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                channelArray.push(Math.pow(a, i));
+            }
+            console.log(channelArray);
+        },
+        functionForGeneration4: function(...params) {
+            this.generationFunctionDialog.status = false;
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let a = 1.0 * this.generationFunctionDialog.params[1].value;
+            let wi = 1.0 * this.generationFunctionDialog.params[2].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[3].value;
+            let channelArray = [];
+            for (let i = 0; i <= n; i++) {
+                channelArray.push(a * Math.sin(i * wi * Math.PI + fi * Math.PI));
+            }
+            console.log(channelArray);
+        },
         functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
           this.generationFunctionDialog.function = this.functionForGeneration1;
@@ -433,7 +455,7 @@
         },
         functionForModeling3: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[2].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration3;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
@@ -448,7 +470,7 @@
         },
         functionForModeling4: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[3].name;
-          this.generationFunctionDialog.function = this.functionForModeling2;
+          this.generationFunctionDialog.function = this.functionForGeneration4;
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
@@ -459,11 +481,11 @@
                   'value' : 0
               },
               {
-                  'key' : '\u03C9',
+                  'key' : '\u03C9 (π)',
                   'value' : 0
               },
               {
-                  'key' : '\u03C6',
+                  'key' : '\u03C6 (π)',
                   'value' : 0
               },
           ];
