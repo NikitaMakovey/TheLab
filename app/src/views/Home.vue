@@ -254,6 +254,44 @@
             </v-card>
         </v-dialog>
 
+        <!-- SUPER DIALOG -->
+        <v-dialog v-model="superDialog"
+                  max-width="600"
+                  hide-overlay
+                  persistent>
+            <v-card>
+                <template v-if="generationFunctionDialog.params.length !== 0">
+                    <v-toolbar dark color="pink">
+                        <v-toolbar-title>{{ generationFunctionDialog.name }}</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+                    <v-list three-line subheader>
+                        <v-list-item-content class="pa-0 ma-0">
+                            <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
+                            <v-list-item-action class="pa-2 ma-0">
+                                <super-component :chartData="generationFunctionDialog.values"
+                                               :chartName="generationFunctionDialog.name"
+                                               :chartId="666"
+                                               :countSteps="generationFunctionDialog.countSteps"
+                                               :timeValue="1000"
+                                               :firstDate="Date.now()"
+                                ></super-component>
+                            </v-list-item-action>
+                        </v-list-item-content>
+                    </v-list>
+                </template>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1"
+                           text
+                           @click="superDialog = false">
+                        ЗАКРЫТЬ
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-spacer></v-spacer>
     </v-system-bar>
 
@@ -290,12 +328,14 @@
 <script>
   import ChannelComponent from "@/components/ChannelComponent";
   import OscComponent from "@/components/OscComponent";
+  import SuperComponent from "@/components/SuperComponent";
 
   export default {
     name: "ComputerGraphicsComponent",
     components: {
       'channel-component' : ChannelComponent,
       'osc-component' : OscComponent,
+      'super-component' : SuperComponent,
     },
     data() {
       return {
@@ -304,6 +344,8 @@
           'name' : '',
           'function' : null,
           'params' : [],
+          'values' : [],
+          'countSteps' : 0,
         },
         generationFunctions: [
             {
@@ -353,6 +395,7 @@
         ],
         aboutDialog: false,
         infoDialog: false,
+        superDialog: false,
 
         infoObject: {
           countChannels: null,
@@ -374,6 +417,8 @@
     },
     methods: {
         functionForGeneration1: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
           this.generationFunctionDialog.status = false;
           let n = 1 * this.generationFunctionDialog.params[0].value;
           let n0 = 1 * this.generationFunctionDialog.params[1].value;
@@ -386,8 +431,13 @@
               }
           }
           console.log(channelArray);
+          this.generationFunctionDialog.countSteps = n;
+          this.generationFunctionDialog.values = channelArray;
+          setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration2: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
             let n0 = 1 * this.generationFunctionDialog.params[1].value;
@@ -400,8 +450,13 @@
                 }
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = n;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration3: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
             let a = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -410,8 +465,13 @@
                 channelArray.push(Math.pow(a, i));
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = n;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration4: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
             let a = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -422,8 +482,13 @@
                 channelArray.push(a * Math.sin(i * omega * Math.PI + fi * Math.PI));
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = n;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration5: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             // if double value the {value} * 1.0
             // if int value the {value} * 1
@@ -440,8 +505,13 @@
                 }
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = n;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration6: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
             let L = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -450,8 +520,13 @@
                 channelArray.push((n % L) / L);
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = n;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration7: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let fd = 1.0 * this.generationFunctionDialog.params[0].value;
             let T = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -465,8 +540,13 @@
                 channelArray.push(a * Math.exp(-t / tau) * Math.cos(2 * Math.PI * f * t + fi));
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration8: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let fd = 1.0 * this.generationFunctionDialog.params[0].value;
             let T = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -480,8 +560,13 @@
                 channelArray.push(a * Math.cos(2 * Math.PI * f0 * t) * Math.cos(2 * Math.PI * fn * t + fi));
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration9: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let fd = 1.0 * this.generationFunctionDialog.params[0].value;
             let T = 1.0 * this.generationFunctionDialog.params[1].value;
@@ -496,6 +581,9 @@
                 channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * t)) * Math.cos(2 * Math.PI * fn * t + fi));
             }
             console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
