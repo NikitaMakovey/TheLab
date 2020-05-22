@@ -415,11 +415,11 @@
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
             let a = 1.0 * this.generationFunctionDialog.params[1].value;
-            let wi = 1.0 * this.generationFunctionDialog.params[2].value;
+            let omega = 1.0 * this.generationFunctionDialog.params[2].value;
             let fi = 1.0 * this.generationFunctionDialog.params[3].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push(a * Math.sin(i * wi * Math.PI + fi * Math.PI));
+                channelArray.push(a * Math.sin(i * omega * Math.PI + fi * Math.PI));
             }
             console.log(channelArray);
         },
@@ -429,50 +429,71 @@
             // if int value the {value} * 1
             // if you will do it then you may use '===' instead of '=='
             // it's javascript, babe :)
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let L = 1.0 * this.generationFunctionDialog.params[1].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                let result = 0; // calculate something...
-                channelArray.push(result);
+                if (n % L < L/2) {
+                    channelArray.push(1);
+                } else {
+                    channelArray.push(-1);
+                }
             }
             console.log(channelArray);
         },
         functionForGeneration6: function(...params) {
             this.generationFunctionDialog.status = false;
-            // ...
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let L = 1.0 * this.generationFunctionDialog.params[1].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                let result = 0; // calculate something...
-                channelArray.push(result);
+                channelArray.push((n % L) / L);
             }
             console.log(channelArray);
         },
         functionForGeneration7: function(...params) {
             this.generationFunctionDialog.status = false;
-            // ...
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let tau = 1.0 * this.generationFunctionDialog.params[4].value;
+            let f = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[6].value;
             let channelArray = [];
-            for (let i = 0; i <= n; i++) {
-                let result = 0; // calculate something...
-                channelArray.push(result);
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * Math.exp(-t / tau) * Math.cos(2 * Math.PI * f * t + fi));
             }
             console.log(channelArray);
         },
         functionForGeneration8: function(...params) {
             this.generationFunctionDialog.status = false;
-            // ...
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let f0 = 1.0 * this.generationFunctionDialog.params[4].value;
+            let fn = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[6].value;
             let channelArray = [];
-            for (let i = 0; i <= n; i++) {
-                let result = 0; // calculate something...
-                channelArray.push(result);
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * Math.cos(2 * Math.PI * f0 * t) * Math.cos(2 * Math.PI * fn * t + fi));
             }
             console.log(channelArray);
         },
         functionForGeneration9: function(...params) {
             this.generationFunctionDialog.status = false;
-            // ...
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let m = 1.0 * this.generationFunctionDialog.params[4].value;
+            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
             let channelArray = [];
-            for (let i = 0; i <= n; i++) {
-                let result = 0; // calculate something...
-                channelArray.push(result);
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * t)) * Math.cos(2 * Math.PI * fn * t + fi));
             }
             console.log(channelArray);
         },
