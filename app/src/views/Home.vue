@@ -479,7 +479,7 @@
             let fi = 1.0 * this.generationFunctionDialog.params[3].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push(a * Math.sin(i * omega * Math.PI + fi * Math.PI));
+                channelArray.push(a * Math.sin(i * omega + fi));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
@@ -498,7 +498,7 @@
             let L = 1.0 * this.generationFunctionDialog.params[1].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                if (n % L < L/2) {
+                if ((i % L) < L/2) {
                     channelArray.push(1);
                 } else {
                     channelArray.push(-1);
@@ -517,7 +517,7 @@
             let L = 1.0 * this.generationFunctionDialog.params[1].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push((n % L) / L);
+                channelArray.push((i % L) / L);
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
@@ -537,7 +537,7 @@
             let fi = 1.0 * this.generationFunctionDialog.params[6].value;
             let channelArray = [];
             for (let i = 0; i <= t; i++) {
-                channelArray.push(a * Math.exp(-t / tau) * Math.cos(2 * Math.PI * f * t + fi));
+                channelArray.push(a * Math.exp(-i / tau) * Math.cos(2 * Math.PI * f * i + fi));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t;

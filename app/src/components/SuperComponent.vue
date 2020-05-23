@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="chartdiv-container">
-            <div class="chartdiv" :id="'chartdiv'+chartId"></div>
+            <div class="chartdiv" :id="'chartdiv'+chartId" style="width: 300px"></div>
         </div>
         <div id="superCustomFile" style="padding: 1rem">
 
