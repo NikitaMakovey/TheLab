@@ -384,6 +384,18 @@
                 'name' : 'Сигнал с тональной огибающей. - амплитудная модуляция',
                 'function' : this.functionForModeling9,
             },
+            {
+                'name' : 'Сигнала белого шума, равномерно распределенного в интервале [a,b]',
+                'function' : this.functionForModeling10,
+            },
+            {
+                'name' : 'Сигнала белого шума, распределенного по нормальному закону с заданными средним и дисперсией',
+                'function' : this.functionForModeling11,
+            },
+            {
+                'name' : 'Случайного сигнал авторегрессии-скользящего среднего порядка (p,q) – АРСС (p,q)',
+                'function' : this.functionForModeling12,
+            },
         ],
         menuItems: [],
         persons: [
@@ -565,6 +577,69 @@
             setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration9: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
+            this.generationFunctionDialog.status = false;
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let m = 1.0 * this.generationFunctionDialog.params[4].value;
+            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+            let channelArray = [];
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+            }
+            console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
+        },
+        functionForGeneration10: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
+            this.generationFunctionDialog.status = false;
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let m = 1.0 * this.generationFunctionDialog.params[4].value;
+            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+            let channelArray = [];
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+            }
+            console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
+        },
+        functionForGeneration11: function(...params) {
+            this.superDialog = false;
+            this.generationFunctionDialog.values = [];
+            this.generationFunctionDialog.status = false;
+            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+            let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            let t = 1 * this.generationFunctionDialog.params[2].value;
+            let a = 1.0 * this.generationFunctionDialog.params[3].value;
+            let m = 1.0 * this.generationFunctionDialog.params[4].value;
+            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
+            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
+            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+            let channelArray = [];
+            for (let i = 0; i <= t; i++) {
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+            }
+            console.log(channelArray);
+            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.values = channelArray;
+            setTimeout(() => { this.superDialog = true; }, 1000);
+        },
+        functionForGeneration12: function(...params) {
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
@@ -791,6 +866,59 @@
               },
           ];
           this.generationFunctionDialog.status = true;
+        },
+        functionForModeling10: function (...params) {
+            this.generationFunctionDialog.name = this.generationFunctions[9].name;
+            this.generationFunctionDialog.function = this.functionForGeneration10;
+            this.generationFunctionDialog.params = [
+                {
+                    'key' : 'n',
+                    'value' : 0
+                },
+                {
+                    'key' : 'a',
+                    'value' : 0
+                },
+                {
+                    'key' : 'b',
+                    'value' : 0
+                },
+            ];
+            this.generationFunctionDialog.status = true;
+        },
+        functionForModeling11: function (...params) {
+            this.generationFunctionDialog.name = this.generationFunctions[10].name;
+            this.generationFunctionDialog.function = this.functionForGeneration11;
+            this.generationFunctionDialog.params = [
+                {
+                    'key' : 'n',
+                    'value' : 0
+                },
+                {
+                    'key' : 'a',
+                    'value' : 0
+                },
+                {
+                    'key' : '\u03C3',
+                    'value' : 0
+                },
+            ];
+            this.generationFunctionDialog.status = true;
+        },
+        functionForModeling12: function (...params) {
+            this.generationFunctionDialog.name = this.generationFunctions[11].name;
+            this.generationFunctionDialog.function = this.functionForGeneration12;
+            this.generationFunctionDialog.params = [
+                {
+                    'key' : 'залупа',
+                    'value' : 0
+                },
+                {
+                    'key' : 'говно',
+                    'value' : 0
+                },
+            ];
+            this.generationFunctionDialog.status = true;
         },
       menuStatusHandle: function (key) {
         let ids = this.$store.getters.IDS;
