@@ -557,7 +557,7 @@
             let fi = 1.0 * this.generationFunctionDialog.params[6].value;
             let channelArray = [];
             for (let i = 0; i <= t; i++) {
-                channelArray.push(a * Math.cos(2 * Math.PI * f0 * t) * Math.cos(2 * Math.PI * fn * t + fi));
+                channelArray.push(a * Math.cos(2 * Math.PI * f0 * i) * Math.cos(2 * Math.PI * fn * i + fi));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t;
@@ -578,7 +578,7 @@
             let fi = 1.0 * this.generationFunctionDialog.params[7].value;
             let channelArray = [];
             for (let i = 0; i <= t; i++) {
-                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * t)) * Math.cos(2 * Math.PI * fn * t + fi));
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t;
