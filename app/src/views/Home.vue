@@ -330,6 +330,9 @@
   import OscComponent from "@/components/OscComponent";
   import SuperComponent from "@/components/SuperComponent";
 
+  function functionForRandomization(a,  b) {
+      return (a + (b - a) * Math.random())
+  }
   export default {
     name: "ComputerGraphicsComponent",
     components: {
@@ -601,20 +604,15 @@
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
-            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-            let T = 1.0 * this.generationFunctionDialog.params[1].value;
-            let t = 1 * this.generationFunctionDialog.params[2].value;
-            let a = 1.0 * this.generationFunctionDialog.params[3].value;
-            let m = 1.0 * this.generationFunctionDialog.params[4].value;
-            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
-            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
-            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let a = 1 * this.generationFunctionDialog.params[1].value;
+            let b = 1 * this.generationFunctionDialog.params[2].value;
             let channelArray = [];
-            for (let i = 0; i <= t; i++) {
-                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+            for (let i = 0; i <= n; i++) {
+                channelArray.push(functionForRandomization(a, b));
             }
             console.log(channelArray);
-            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
             setTimeout(() => { this.superDialog = true; }, 1000);
         },
@@ -622,16 +620,11 @@
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
-            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-            let T = 1.0 * this.generationFunctionDialog.params[1].value;
-            let t = 1 * this.generationFunctionDialog.params[2].value;
-            let a = 1.0 * this.generationFunctionDialog.params[3].value;
-            let m = 1.0 * this.generationFunctionDialog.params[4].value;
-            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
-            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
-            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+            let n = 1 * this.generationFunctionDialog.params[0].value;
+            let a = 1 * this.generationFunctionDialog.params[1].value;
+            let sigma = 1 * this.generationFunctionDialog.params[2].value;
             let channelArray = [];
-            for (let i = 0; i <= t; i++) {
+            for (let i = 0; i <= n; i++) {
                 channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
             }
             console.log(channelArray);
