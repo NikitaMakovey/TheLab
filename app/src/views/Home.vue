@@ -333,6 +333,13 @@
   function functionForRandomization(a,  b) {
       return (a + (b - a) * Math.random())
   }
+  function functionForNormalRandomization(a, q) {
+      let s = 0;
+      for (let i = 0; i <= 12; i++) {
+          s += Math.random();
+      }
+      return (a + Math.sqrt(q) * (s - 6))
+  }
   export default {
     name: "ComputerGraphicsComponent",
     components: {
@@ -625,10 +632,10 @@
             let sigma = 1 * this.generationFunctionDialog.params[2].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+                channelArray.push(functionForNormalRandomization(a, sigma));
             }
             console.log(channelArray);
-            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
             setTimeout(() => { this.superDialog = true; }, 1000);
         },
@@ -892,7 +899,7 @@
                     'value' : 0
                 },
                 {
-                    'key' : '\u03C3',
+                    'key' : '\u03C3^2',
                     'value' : 0
                 },
             ];
