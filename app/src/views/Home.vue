@@ -910,11 +910,15 @@
             this.generationFunctionDialog.function = this.functionForGeneration12;
             this.generationFunctionDialog.params = [
                 {
-                    'key' : 'залупа',
+                    'key' : 'n',
                     'value' : 0
                 },
                 {
-                    'key' : 'говно',
+                    'key' : 'p',
+                    'value' : 0
+                },
+                {
+                    'key' : 'q',
                     'value' : 0
                 },
             ];
