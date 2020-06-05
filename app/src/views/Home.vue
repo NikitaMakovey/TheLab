@@ -643,20 +643,45 @@
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
-            let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-            let T = 1.0 * this.generationFunctionDialog.params[1].value;
-            let t = 1 * this.generationFunctionDialog.params[2].value;
-            let a = 1.0 * this.generationFunctionDialog.params[3].value;
-            let m = 1.0 * this.generationFunctionDialog.params[4].value;
-            let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
-            let fn = 1.0 * this.generationFunctionDialog.params[6].value;
-            let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+
+            let n = 1.0 * this.generationFunctionDialog.params[0].value;
+            let p = 1.0 * this.generationFunctionDialog.params[1].value;
+            let q = 1.0 * this.generationFunctionDialog.params[2].value;
+            let sigma = 1 * this.generationFunctionDialog.params[3].value;
+
             let channelArray = [];
-            for (let i = 0; i <= t; i++) {
-                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+
+            let aArray = [-4.167, 7.940, -9.397, 7.515, -3.752, 0.862];
+            let bArray = [-2.28, 1.77, -0.472];
+            let xArray = [];
+            let yArray = [];
+
+            console.log(aArray);
+            console.log(bArray);
+
+            for (let j = 0; j < n; j++) {
+                let sum1 = 0;
+                let sum2 = 0;
+                xArray.push(functionForNormalRandomization(0, sigma));
+
+                for (let i = 0; i < q; i++) {
+                    if ((j - i) >= 0) {
+                        sum1 += bArray[i] * xArray[j-i];
+                    }
+                }
+
+                if (j > 0) {
+                    for (let i = 0; i < p; i++) {
+                        if (((j - i) >= 0) && (j - i < j)) {
+                            sum2 += aArray[i] * yArray[j-i];
+                        }
+                    }
+                }
+
+                yArray.push(xArray[j] + sum1 - sum2);
+                channelArray.push(xArray[j] + sum1 - sum2);
             }
-            console.log(channelArray);
-            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.countSteps = n-1;
             this.generationFunctionDialog.values = channelArray;
             setTimeout(() => { this.superDialog = true; }, 1000);
         },
@@ -919,6 +944,10 @@
                 },
                 {
                     'key' : 'q',
+                    'value' : 0
+                },
+                {
+                    'key' : '\u03C3^2',
                     'value' : 0
                 },
             ];
