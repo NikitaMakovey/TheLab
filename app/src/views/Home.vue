@@ -442,7 +442,7 @@
         },
         functionForNormalRandomization: function(a, q) {
               let s = 0;
-              for (let i = 0; i <= 12; i++) {
+              for (let i = 0; i < 12; i++) {
                   s += Math.random();
               }
               return (a + Math.sqrt(q) * (s - 6))
@@ -601,6 +601,7 @@
             this.generationFunctionDialog.status = false;
             let fd = 1.0 * this.generationFunctionDialog.params[0].value;
             let T = 1.0 * this.generationFunctionDialog.params[1].value;
+            T = 1.0 / fd;
             let t = 1 * this.generationFunctionDialog.params[2].value;
             let a = 1.0 * this.generationFunctionDialog.params[3].value;
             let m = 1.0 * this.generationFunctionDialog.params[4].value;
@@ -608,11 +609,11 @@
             let fn = 1.0 * this.generationFunctionDialog.params[6].value;
             let fi = 1.0 * this.generationFunctionDialog.params[7].value;
             let channelArray = [];
-            for (let i = 0; i <= t; i++) {
-                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * i)) * Math.cos(2 * Math.PI * fn * i + fi));
+            for (let i = 0; i < t; i++) {
+                channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * T * i)) * Math.cos(2 * Math.PI * fn * T * i + fi));
             }
             console.log(channelArray);
-            this.generationFunctionDialog.countSteps = t;
+            this.generationFunctionDialog.countSteps = t - 1;
             this.generationFunctionDialog.values = channelArray;
             setTimeout(() => { this.superDialog = true; }, 1000);
         },
@@ -621,11 +622,8 @@
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
-            let a = this.generationFunctionDialog.params[1].value;
-            if (a.length > 0) {
-                a = a.split()
-            }
-            let b = this.generationFunctionDialog.params[2].value;
+            let a = 1 * this.generationFunctionDialog.params[1].value;
+            let b = 1 * this.generationFunctionDialog.params[2].value;
             console.log(a, b);
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
@@ -658,20 +656,22 @@
             this.generationFunctionDialog.status = false;
 
             let n = 1.0 * this.generationFunctionDialog.params[0].value;
-            let p = 1.0 * this.generationFunctionDialog.params[1].value;
-            let q = 1.0 * this.generationFunctionDialog.params[2].value;
+            let p = 1 * this.generationFunctionDialog.params[1].value;
+            let q = 1 * this.generationFunctionDialog.params[2].value;
             let sigma = 1 * this.generationFunctionDialog.params[3].value;
 
             let channelArray = [];
 
-            let aArray = [-4.167, 7.940, -9.397, 7.515, -3.752, 0.862];
-            let bArray = [-2.28, 1.77, -0.472];
+            let aArray; //= [-4.167, 7.940, -9.397, 7.515, -3.752, 0.862];
+            let bArray;// = [-2.28, 1.77, -0.472];
             if (this.generationFunctionDialog.params[4].value.length > 0) {
                 aArray = this.generationFunctionDialog.params[4].value.split(', ')
             }
             if (this.generationFunctionDialog.params[5].value.length > 0) {
                 bArray = this.generationFunctionDialog.params[5].value.split(', ')
             }
+            console.log(aArray);
+            console.log(bArray);
             let xArray = [];
             let yArray = [];
 
@@ -684,16 +684,18 @@
                 xArray.push(this.functionForNormalRandomization(0, sigma));
 
                 for (let i = 0; i < q; i++) {
-                    if ((j - i) >= 0) {
-                        sum1 += bArray[i] * xArray[j-i];
+                    if ((j - i) > 0) {
+                        sum1 += bArray[i] * xArray[j - i - 1];
                     }
                 }
 
                 if (j > 0) {
                     for (let i = 0; i < p; i++) {
-                        if (((j - i) >= 0) && (j - i < j)) {
-                            sum2 += aArray[i] * yArray[j-i];
+                        //if (((j - i) > 0) && (j - i < j)) {
+                        if ((j - i) > 0) {
+                            sum2 += aArray[i] * yArray[j - i - 1];
                         }
+                        //}
                     }
                 }
 
@@ -711,11 +713,11 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 100
               },
               {
                   'key' : 'n0',
-                  'value' : 0
+                  'value' : 50
               },
           ];
           this.generationFunctionDialog.status = true;
@@ -726,7 +728,7 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 100
               },
               {
                   'key' : 'n0',
@@ -741,7 +743,7 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 10
               },
               {
                   'key' : 'a',
@@ -756,7 +758,7 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 50
               },
               {
                   'key' : 'a',
@@ -779,11 +781,11 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 100
               },
               {
                   'key' : 'L',
-                  'value' : 0
+                  'value' : 20
               },
           ];
           this.generationFunctionDialog.status = true;
@@ -794,11 +796,11 @@
           this.generationFunctionDialog.params = [
               {
                   'key' : 'n',
-                  'value' : 0
+                  'value' : 100
               },
               {
                   'key' : 'L',
-                  'value' : 0
+                  'value' : 20
               },
           ];
           this.generationFunctionDialog.status = true;
@@ -956,27 +958,27 @@
             this.generationFunctionDialog.params = [
                 {
                     'key' : 'n',
-                    'value' : 0
+                    'value' : 10
                 },
                 {
                     'key' : 'p',
-                    'value' : 0
+                    'value' : 6
                 },
                 {
                     'key' : 'q',
-                    'value' : 0
+                    'value' : 3
                 },
                 {
                     'key' : '\u03C3^2',
-                    'value' : 0
+                    'value' : 1
                 },
                 {
                     'key' : 'a',
-                    'value' : ''
+                    'value' : '-4.167, 7.940, -9.397, 7.515, -3.752, 0.862'
                 },
                 {
                     'key' : 'b',
-                    'value' : ''
+                    'value' : '-2.28, 1.77, -0.472'
                 },
             ];
             this.generationFunctionDialog.status = true;
