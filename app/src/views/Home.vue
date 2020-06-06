@@ -105,9 +105,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(item, index) in generationFunctionDialog.params" :key="index">
-                            <td>{{ item.key }}</td>
-                            <td><input class="form-control" type="number" v-model="item.value"></td>
+                        <tr v-for="(param, index) in generationFunctionDialog.params" :key="index">
+                            <td>{{ param.key }}</td>
+                            <template v-if="generationFunctionDialog.name === generationFunctions[11].name &&
+                                (param.key === 'a' || param.key === 'b')"
+                            >
+                                <td><input class="form-control" type="text" v-model="param.value"></td>
+                            </template>
+                            <template v-else>
+                                <td><input class="form-control" type="number" v-model="param.value"></td>
+                            </template>
                         </tr>
                         </tbody>
                     </template>
@@ -124,6 +131,7 @@
         </v-dialog>
         <!-- TODO: Menu for modeling END -->
 
+        <!-- ABOUT DIALOG -->
         <v-dialog v-model="aboutDialog" fullscreen
                   hide-overlay transition="dialog-bottom-transition">
             <template v-slot:activator="{ on }">
@@ -157,6 +165,7 @@
             </v-card>
         </v-dialog>
 
+        <!-- INFO DIALOG -->
         <v-dialog v-model="infoDialog"
                   max-width="600">
             <v-card>
@@ -330,16 +339,6 @@
   import OscComponent from "@/components/OscComponent";
   import SuperComponent from "@/components/SuperComponent";
 
-  function functionForRandomization(a,  b) {
-      return (a + (b - a) * Math.random())
-  }
-  function functionForNormalRandomization(a, q) {
-      let s = 0;
-      for (let i = 0; i <= 12; i++) {
-          s += Math.random();
-      }
-      return (a + Math.sqrt(q) * (s - 6))
-  }
   export default {
     name: "ComputerGraphicsComponent",
     components: {
@@ -438,6 +437,16 @@
       }
     },
     methods: {
+        functionForRandomization: function(a,  b) {
+              return (a + (b - a) * Math.random())
+        },
+        functionForNormalRandomization: function(a, q) {
+              let s = 0;
+              for (let i = 0; i <= 12; i++) {
+                  s += Math.random();
+              }
+              return (a + Math.sqrt(q) * (s - 6))
+        },
         functionForGeneration1: function(...params) {
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
@@ -612,11 +621,15 @@
             this.generationFunctionDialog.values = [];
             this.generationFunctionDialog.status = false;
             let n = 1 * this.generationFunctionDialog.params[0].value;
-            let a = 1 * this.generationFunctionDialog.params[1].value;
-            let b = 1 * this.generationFunctionDialog.params[2].value;
+            let a = this.generationFunctionDialog.params[1].value;
+            if (a.length > 0) {
+                a = a.split()
+            }
+            let b = this.generationFunctionDialog.params[2].value;
+            console.log(a, b);
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push(functionForRandomization(a, b));
+                channelArray.push(this.functionForRandomization(a, b));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
@@ -632,7 +645,7 @@
             let sigma = 1 * this.generationFunctionDialog.params[2].value;
             let channelArray = [];
             for (let i = 0; i <= n; i++) {
-                channelArray.push(functionForNormalRandomization(a, sigma));
+                channelArray.push(this.functionForNormalRandomization(a, sigma));
             }
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
@@ -653,16 +666,22 @@
 
             let aArray = [-4.167, 7.940, -9.397, 7.515, -3.752, 0.862];
             let bArray = [-2.28, 1.77, -0.472];
+            if (this.generationFunctionDialog.params[4].value.length > 0) {
+                aArray = this.generationFunctionDialog.params[4].value.split(', ')
+            }
+            if (this.generationFunctionDialog.params[5].value.length > 0) {
+                bArray = this.generationFunctionDialog.params[5].value.split(', ')
+            }
             let xArray = [];
             let yArray = [];
 
-            console.log(aArray);
-            console.log(bArray);
+            // console.log(aArray);
+            // console.log(bArray);
 
             for (let j = 0; j < n; j++) {
                 let sum1 = 0;
                 let sum2 = 0;
-                xArray.push(functionForNormalRandomization(0, sigma));
+                xArray.push(this.functionForNormalRandomization(0, sigma));
 
                 for (let i = 0; i < q; i++) {
                     if ((j - i) >= 0) {
@@ -681,6 +700,7 @@
                 yArray.push(xArray[j] + sum1 - sum2);
                 channelArray.push(xArray[j] + sum1 - sum2);
             }
+            console.table(xArray);
             this.generationFunctionDialog.countSteps = n-1;
             this.generationFunctionDialog.values = channelArray;
             setTimeout(() => { this.superDialog = true; }, 1000);
@@ -949,6 +969,14 @@
                 {
                     'key' : '\u03C3^2',
                     'value' : 0
+                },
+                {
+                    'key' : 'a',
+                    'value' : ''
+                },
+                {
+                    'key' : 'b',
+                    'value' : ''
                 },
             ];
             this.generationFunctionDialog.status = true;
