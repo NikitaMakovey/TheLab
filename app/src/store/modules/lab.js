@@ -1,7 +1,7 @@
 export default {
     state: {
-        CHANNELS: null,
-        NAMES: null,
+        CHANNELS: [],
+        NAMES: [],
     },
     getters: {
         CHANNELS: state => { return state.CHANNELS },

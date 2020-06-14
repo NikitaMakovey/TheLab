@@ -311,7 +311,7 @@
 
         </v-col>
         <v-col cols="2">
-          <template v-if="this.$store.getters.CHANNELS !== null">
+          <template v-if="this.$store.getters.CHANNELS.length !== 0">
             <div style="width: 201px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
               <v-subheader class="ma-0 pa-2 title ">Каналы</v-subheader>
               <v-row
@@ -447,6 +447,14 @@
               }
               return (a + Math.sqrt(q) * (s - 6))
         },
+        functionForReplacing: function(channelArray) {
+            let NAMES = this.$store.getters.NAMES;
+            NAMES.push(this.generationFunctionDialog.name);
+            this.$store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
+            let CHANNELS = this.$store.getters.CHANNELS;
+            CHANNELS.push(channelArray);
+            this.$store.dispatch('UPDATE_CHANNELS', CHANNELS);
+        },
         functionForGeneration1: function(...params) {
             this.superDialog = false;
             this.generationFunctionDialog.values = [];
@@ -464,7 +472,8 @@
           console.log(channelArray);
           this.generationFunctionDialog.countSteps = n;
           this.generationFunctionDialog.values = channelArray;
-          setTimeout(() => { this.superDialog = true; }, 1000);
+          this.functionForReplacing(channelArray);
+          //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration2: function(...params) {
             this.superDialog = false;
@@ -483,7 +492,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration3: function(...params) {
             this.superDialog = false;
@@ -498,7 +508,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration4: function(...params) {
             this.superDialog = false;
@@ -515,7 +526,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration5: function(...params) {
             this.superDialog = false;
@@ -538,7 +550,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration6: function(...params) {
             this.superDialog = false;
@@ -553,7 +566,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration7: function(...params) {
             this.superDialog = false;
@@ -573,7 +587,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration8: function(...params) {
             this.superDialog = false;
@@ -593,7 +608,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration9: function(...params) {
             this.superDialog = false;
@@ -615,7 +631,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = t - 1;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration10: function(...params) {
             this.superDialog = false;
@@ -632,7 +649,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration11: function(...params) {
             this.superDialog = false;
@@ -648,7 +666,8 @@
             console.log(channelArray);
             this.generationFunctionDialog.countSteps = n;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForGeneration12: function(...params) {
             this.superDialog = false;
@@ -705,7 +724,8 @@
             console.table(xArray);
             this.generationFunctionDialog.countSteps = n-1;
             this.generationFunctionDialog.values = channelArray;
-            setTimeout(() => { this.superDialog = true; }, 1000);
+            this.functionForReplacing(channelArray);
+            //setTimeout(() => { this.superDialog = true; }, 1000);
         },
         functionForModeling1: function (...params) {
           this.generationFunctionDialog.name = this.generationFunctions[0].name;
