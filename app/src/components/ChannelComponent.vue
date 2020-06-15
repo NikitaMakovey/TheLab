@@ -4,6 +4,9 @@
             <li @click="eventHandle(chartId)">
                 <a href="#"><b>осциллограмма</b></a>
             </li>
+            <li @click="eventHandleStat(chartId)">
+                <a href="#"><b>какашка</b></a>
+            </li>
         </vue-context>
         <canvas
             height="100" width="200"
@@ -72,8 +75,12 @@
                 }
 
                 this.$store.dispatch('UPDATE_OSC_DIALOG', true);
+            },
+            eventHandleStat: function (key, event) {
+                this.$store.dispatch('UPDATE_STAT_ID', key);
+                this.$store.dispatch('UPDATE_STAT_DIALOG', true);
             }
-        },
+        }
         
     }
 

@@ -2,12 +2,16 @@ export default {
     state: {
         OSC_CHANNELS: [],
         IDS: [],
-        OSC_DIALOG: false
+        OSC_DIALOG: false,
+        STAT_ID: 0,
+        STAT_DIALOG: false
     },
     getters: {
         OSC_CHANNELS: state => { return state.OSC_CHANNELS },
         IDS: state => { return state.IDS },
         OSC_DIALOG: state => { return state.OSC_DIALOG },
+        STAT_ID: state => { return state.STAT_ID },
+        STAT_DIALOG: state => { return state.STAT_DIALOG }
     },
     mutations: {
         REFRESH_OSC: (state) => {
@@ -26,6 +30,12 @@ export default {
         REMOVE_ITEM: (state, payload) => {
             state.OSC_CHANNELS.splice(payload, 1);
             state.IDS.splice(payload, 1);
+        },
+        REFRESH_STAT_ID: (state, payload) => {
+            state.STAT_ID = payload;
+        },
+        REFRESH_STAT_DIALOG: (state, payload) => {
+            state.STAT_DIALOG = payload
         }
     },
     actions: {
@@ -56,6 +66,18 @@ export default {
         DELETE_ITEM_FROM_OSC(context, data) {
             return new Promise(resolve => {
                 context.commit('REMOVE_ITEM', data);
+                resolve(data);
+            });
+        },
+        UPDATE_STAT_ID(context, data) {
+            return new Promise(resolve => {
+                context.commit('REFRESH_STAT_ID', data);
+                resolve(data);
+            });
+        },
+        UPDATE_STAT_DIALOG(context, data) {
+            return new Promise(resolve => {
+                context.commit('REFRESH_STAT_DIALOG', data);
                 resolve(data);
             });
         }
