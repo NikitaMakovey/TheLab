@@ -54,7 +54,7 @@
             series.dataFields.valueY = "y";
             series.dataFields.valueX = "x";
             series.strokeWidth = 2;
-            series.minBulletDistance = 1;
+            series.minBulletDistance = 0;
             series.tooltipText = "{valueY}";
             series.tooltip.pointerOrientation = "vertical";
             series.tooltip.background.cornerRadius = 20;
@@ -73,7 +73,6 @@
             generateChartData: function(data) {
                 let chartData = [];
                 for (let i = 0; i < this.countSteps; i++) {
-                    console.log(chartData);
                     chartData.push({
                         x: (this.timeValue / 1000) * i,
                         y: data[i]

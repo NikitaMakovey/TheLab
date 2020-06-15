@@ -164,9 +164,29 @@
                     <v-spacer></v-spacer>
                 </v-toolbar>
 
-                <label>НАЗВАНИЕ: {{ this.$store.getters.NAMES[this.$store.getters.STAT_ID] }}</label> <br>
+                <label>Название: {{ this.$store.getters.NAMES[this.$store.getters.STAT_ID] }}</label> <br>
 
-                <label>СРЕДНЕЕ: {{ Average }}</label>
+                <label>Среднее: {{ Average.toFixed(3) }}</label> <br>
+
+                <label>Дисперсия σ^2: {{ Dispersion.toFixed(3) }}</label> <br>
+
+                <label>Среднеквадратичное отклонение σ: {{ AvgDeviation.toFixed(3) }}</label><br>
+
+                <label>Коэффициент вариации r: {{ Variation.toFixed(3) }}</label> <br>
+
+                <label>Коэффициент асимметрии &gamma; {{ Asymmetry.toFixed(3) }}</label> <br>
+
+                <label>Коэффициент эксцесса к: {{ Excess.toFixed(3) }} </label> <br>
+
+                <label>Минимальное значение сигнала: {{ Min.toFixed(3) }}</label> <br>
+
+                <label>Максимальное значение сигнала: {{ Max.toFixed(3) }}</label> <br>
+
+                <label>Квантиль порядка 0.05: {{ Quantile1.toFixed(3) }}</label> <br>
+
+                <label>Квантиль порядка 0.95: {{ Quantile2.toFixed(3) }}</label> <br>
+
+                <label>Медиана: {{ Median.toFixed(3) }}</label>
 
                 <v-card-actions class="pa-4 ma-0">
                     <v-spacer></v-spacer>
@@ -363,7 +383,7 @@
 
         </v-col>
         <v-col cols="2">
-          <template v-if="this.$store.getters.CHANNELS.length !== 0">
+          <template v-if="this.$store.getters.CHANNELS !== null && this.$store.getters.CHANNELS.length !== 0">
             <div style="width: 201px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
               <v-subheader class="ma-0 pa-2 title ">Каналы</v-subheader>
               <v-row
@@ -506,6 +526,8 @@
               let CHANNELS = this.$store.getters.CHANNELS;
               CHANNELS.push(channelArray);
               this.$store.dispatch('UPDATE_CHANNELS', CHANNELS);
+              this.infoObject.countSteps = channelArray.length;
+              this.infoObject.countGiges = 1;
           },
           functionForGeneration1: function (...params) {
               this.superDialog = false;
@@ -521,7 +543,6 @@
                       channelArray.push(0);
                   }
               }
-              console.log(channelArray);
               this.generationFunctionDialog.countSteps = n;
               this.generationFunctionDialog.values = channelArray;
               this.functionForReplacing(channelArray);
@@ -1100,16 +1121,14 @@
               //
           },
           loadFile: function (e) {
-              this.$store.dispatch('UPDATE_CHANNELS', null).then(() => {
-                  const file = e.target.files[0];
+              const file = e.target.files[0];
 
-                  let fileType = file.type;
-                  this.fileSource = file.name;
+              let fileType = file.type;
+              this.fileSource = file.name;
 
-                  if (fileType === "text/plain") {
-                      this.readFile(file);
-                  }
-              });
+              if (fileType === "text/plain") {
+                  this.readFile(file);
+              }
           },
           readFile: function (file) {
               this.$store.dispatch('CLEAR_OSC');
@@ -1138,6 +1157,10 @@
                           }
 
                           if (cnt === 3) {
+                              if (Number(delta[delta.length - 1]) !== infoObject.countSteps) {
+                                  vm.$store.dispatch("UPDATE_CHANNELS", []);
+                              }
+
                               infoObject.countSteps = Number(delta[delta.length - 1]);
                           }
 
@@ -1208,7 +1231,7 @@
               let avgSum = 0;
               let channels = this.$store.getters.CHANNELS;
 
-              if (channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
                   for (let i = 0; i < channels[channelId].length; i++) {
                       avgSum += channels[channelId][i];
                   }
@@ -1216,7 +1239,122 @@
               }
 
               return avgSum;
+          },
+          Dispersion: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let avgSum = this.Average;
+              let channels = this.$store.getters.CHANNELS;
+              let disp = 0;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                  for (let i = 0; i < channels[channelId].length; i++) {
+                      disp += Math.pow(channels[channelId][i] - avgSum, 2);
+                  }
+                  disp /= channels[channelId].length;
+              }
+
+              return disp;
+          },
+          AvgDeviation: function () {
+              return Math.sqrt(this.Dispersion);
+          },
+          Variation: function () {
+              if (Math.abs(this.Average) < Number.EPSILON) {
+                  return 0;
+              }
+
+              return this.AvgDeviation / this.Average;
+          },
+          Asymmetry: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let avgSum = this.Average;
+              let channels = this.$store.getters.CHANNELS;
+              let ass = 0;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                  for (let i = 0; i < channels[channelId].length; i++) {
+                      ass += Math.pow(channels[channelId][i] - avgSum, 3);
+                  }
+                  ass /= channels[channelId].length;
+                  ass /= Math.pow(this.AvgDeviation, 3)
+              }
+
+              return ass;
+          },
+          Excess: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let avgSum = this.Average;
+              let channels = this.$store.getters.CHANNELS;
+              let excess = 0;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                  for (let i = 0; i < channels[channelId].length; i++) {
+                      excess += Math.pow(channels[channelId][i] - avgSum, 4);
+                  }
+                  excess /= channels[channelId].length;
+                  excess /= Math.pow(this.AvgDeviation, 4)
+              }
+
+              return excess - 3;
+          },
+          Min: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                return Math.min(...channels[channelId]);
+              }
+
+              return 0;
+          },
+          Max: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                  return Math.max(...channels[channelId]);
+              }
+
+              return 0;
+          },
+          Quantile1: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (!(channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
+                  return 0;
+              }
+
+              let channelSort = [...channels[channelId]].sort();
+
+              return channelSort[Math.floor(0.05 * channels[channelId].length)]
+          },
+          Quantile2: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (!(channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
+                  return 0;
+              }
+
+              let channelSort = [...channels[channelId]].sort();
+
+              return channelSort[Math.floor(0.95 * channels[channelId].length)]
+
+          },
+          Median: function () {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (!(channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
+                  return 0;
+              }
+
+              let channelSort = [...channels[channelId]].sort();
+
+              return channelSort[Math.floor(0.5 * channels[channelId].length)]
           }
+
       }
   }
 </script>
