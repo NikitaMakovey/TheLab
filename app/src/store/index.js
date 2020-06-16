@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import lab from "@/store/modules/lab";
-import osc from "@/store/modules/oscilog";
+import lab from "./modules/lab";
+import osc from "./modules/oscilog";
 
 Vue.use(Vuex);
 

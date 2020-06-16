@@ -33,57 +33,70 @@
         extends: Line,
         props: ['chartData', 'chartName', 'chartId'],
         mixins: [mixins.reactiveProp],
-        mounted () {
-            this.renderChart({
-                    labels: this.chartData,
-                    datasets: [
-                        {
-                            pointRadius: 0,
-                            label: this.chartName,
-                            backgroundColor: 'white',
-                            data: this.chartData,
-                            pointStyle: 'line',
-                            borderWidth: 1,
-                            borderColor: 'black'
-                        }
-                    ]
+        mounted() {
+            this.myRenderChart();
+        },
+        watch: {
+            chartData: function () {
+                this.myRenderChart();
             },
-            {
-                scales:{
-                    xAxes: [{
-                        display: false
-                    }],
-                    yAxes: [{
-                        display: false
-                    }]
-                },
-                responsive: true
-            });
+            chartName: function () {
+                this.myRenderChart();
+            },
+            chartId: function () {
+                this.myRenderChart();
+            }
         },
         methods: {
-            eventHandle: function (key, event) {
-                console.log(key);
+            eventHandle: function (key) {
                 let ids = this.$store.getters.IDS;
                 let is_pushed = false;
                 for (let i = 0; i !== ids.length; i++) {
-                    if (ids[i] === key) is_pushed = true;
+                    if (ids[i] === key) {
+                        is_pushed = true;
+                        break;
+                    }
                 }
 
                 if (!is_pushed) {
                     this.$store.dispatch('UPDATE_IDS', key);
-                    this.$store.dispatch('UPDATE_OSC_CHANNELS', this.$store.getters.CHANNELS[key]);
                 }
 
                 this.$store.dispatch('UPDATE_OSC_DIALOG', true);
             },
-            eventHandleStat: function (key, event) {
+            eventHandleStat: function (key) {
                 this.$store.dispatch('UPDATE_STAT_ID', key);
                 this.$store.dispatch('UPDATE_STAT_DIALOG', true);
+            },
+            myRenderChart: function () {
+                this.renderChart({
+                            labels: this.chartData,
+                            datasets: [
+                                {
+                                    pointRadius: 0,
+                                    label: this.chartName,
+                                    backgroundColor: 'white',
+                                    data: this.chartData,
+                                    pointStyle: 'line',
+                                    borderWidth: 1,
+                                    borderColor: 'black'
+                                }
+                            ]
+                        },
+                        {
+                            scales: {
+                                xAxes: [{
+                                    display: false
+                                }],
+                                yAxes: [{
+                                    display: false
+                                }]
+                            },
+                            responsive: true
+                        });
             }
         }
-        
     }
-
 </script>
 
 <style scoped>

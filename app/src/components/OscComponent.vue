@@ -1,5 +1,5 @@
 <template>
-    <div class="chartdiv-container" @contextmenu.prevent="$refs.menu.open">
+    <div class="chart-div-container" @contextmenu.prevent="$refs.menu.open">
         <vue-context ref="menu" class="px-0">
             <li @click="closeHandle(chartId)">
                 <a href="#"><b>закрыть</b></a>
@@ -8,7 +8,7 @@
                 <a href="#"><b>выйти</b></a>
             </li>
         </vue-context>
-        <div class="chartdiv" :id="'chartdiv'+chartId"></div>
+        <div class="chart-div" ref="chartDiv"></div>
     </div>
 </template>
 
@@ -23,7 +23,8 @@
     export default {
         data() {
             return {
-                index: 0
+                index: 0,
+                chart: null
             }
         },
         components: {
@@ -34,43 +35,73 @@
             'chartId', 'countSteps',
             'timeValue', 'firstDate'
         ],
-        mounted () {
+        watch: {
+            chartData: function () {
+                this.myRenderChart();
+            },
+            chartName: function () {
+                this.myRenderChart();
+            },
+            chartId: function () {
+                this.myRenderChart();
+            },
+            countSteps: function () {
+                this.myRenderChart();
+            },
+            timeValue: function () {
+                this.myRenderChart();
+            },
+            firstDate: function () {
+                this.myRenderChart();
+            }
+        },
+        mounted() {
             am4core.useTheme(am4themes_dataviz);
-            am4core.useTheme(am4themes_animated);
-            // this.chartName
-            // this.chartData
-            let chartDiv = 'chartdiv' + this.chartId;
-            let chart = am4core.create(chartDiv, am4charts.XYChart);
 
-            const vm = this;
-            chart.data = vm.generateChartData(this.$store.getters.OSC_CHANNELS[this.chartId]);
+            this.chart = am4core.create(this.$refs.chartDiv, am4charts.XYChart);
 
-            let timeAxis = chart.xAxes.push(new am4charts.ValueAxis());
+            this.myRenderChart();
+
+            let timeAxis = this.chart.xAxes.push(new am4charts.ValueAxis());
+            timeAxis.extraMax = 0;
+            timeAxis.extraMin = 0;
+            timeAxis.strictMinMax = true;
+            timeAxis.min = 0;
+            timeAxis.max = Math.floor((this.timeValue / 1000) * (this.countSteps - 1));
             timeAxis.renderer.minGridDistance = 50;
 
-            let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+            let valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
 
-            let series = chart.series.push(new am4charts.LineSeries());
+            let series = this.chart.series.push(new am4charts.LineSeries());
             series.dataFields.valueY = "y";
             series.dataFields.valueX = "x";
-            series.strokeWidth = 2;
-            series.minBulletDistance = 0;
+            //series.strokeWidth = 2;
+            //series.minBulletDistance = 0;
             series.tooltipText = "{valueY}";
             series.tooltip.pointerOrientation = "vertical";
-            series.tooltip.background.cornerRadius = 20;
+            //series.tooltip.background.cornerRadius = 20;
             series.tooltip.background.fillOpacity = 0.5;
-            series.tooltip.label.padding(12,12,12,12);
+            //series.tooltip.label.padding(12, 12, 12, 12);
 
-            chart.scrollbarX = new am4charts.XYChartScrollbar();
-            chart.scrollbarX.series.push(series);
+            this.chart.scrollbarX = new am4charts.XYChartScrollbar();
+            this.chart.scrollbarX.series.push(series);
 
-            chart.cursor = new am4charts.XYCursor();
-            chart.cursor.xAxis = timeAxis;
-            chart.cursor.snapToSeries = series;
-            // TODO: smth
+            this.chart.cursor = new am4charts.XYCursor();
+            this.chart.cursor.xAxis = timeAxis;
+            this.chart.cursor.snapToSeries = series;
         },
         methods: {
-            generateChartData: function(data) {
+            gcd: function(a, b) {
+                if (!b) {
+                    return a;
+                }
+
+                return this.gcd(b, a % b);
+            },
+            myRenderChart: function () {
+                this.chart.data = this.generateChartData(this.chartData);
+            },
+            generateChartData: function (data) {
                 let chartData = [];
                 for (let i = 0; i < this.countSteps; i++) {
                     chartData.push({
@@ -78,28 +109,32 @@
                         y: data[i]
                     });
                 }
+
                 return chartData;
             },
-            closeHandle: function(key) {
+            closeHandle: function (key) {
                 this.$store.dispatch('DELETE_ITEM_FROM_OSC', key);
             },
-            exitHandle: function() {
+            exitHandle: function () {
                 this.$store.dispatch('UPDATE_OSC_DIALOG', false);
             }
         },
-
+        beforeDestroy() {
+            if (this.chart) {
+                this.chart.dispose();
+            }
+        }
     }
-
 </script>
 
 <style scoped>
 
-.chartdiv-container {
+.chart-div-container {
     width: 100%;
     height: 350px;
 }
 
-.chartdiv {
+.chart-div {
     width: 100%;
     height: 350px;
 }

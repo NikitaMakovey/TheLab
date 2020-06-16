@@ -33,7 +33,7 @@
             </template>
             <v-list class="pa-0">
                 <v-list-item>
-                    <v-list-item-title @click.stop="infoDialog = fileSource!==null">
+                    <v-list-item-title @click.stop="infoDialog = (fileSource !== null)">
                         Инфо
                     </v-list-item-title>
                 </v-list-item>
@@ -57,7 +57,6 @@
                     <v-list-item-title class="pa-0">
                         <v-checkbox class="pa-2"
                                     @change="menuClickHandle(index)"
-                                    v-model="menuItems"
                                     :value="item"
                                     :label="item"></v-checkbox>
                     </v-list-item-title>
@@ -73,13 +72,13 @@
                 </span>
             </template>
             <v-list class="pa-0">
-                <template v-for="(item, i) in generationFunctions">
+                <template v-for="(item, index) in generationFunctions">
                     <v-list-item>
                         <v-list-item-title style="text-align: left !important;">
                             {{ item.name }}
                         </v-list-item-title>
                         <v-list-item-action>
-                            <v-btn dark class="ma-0 pa-1" @click="item.function">Запуск</v-btn>
+                            <v-btn dark class="ma-0 pa-1" @click="functionForModeling(index)">Запуск</v-btn>
                         </v-list-item-action>
                     </v-list-item>
                     <v-divider></v-divider>
@@ -131,9 +130,6 @@
         </v-dialog>
         <!-- TODO: Menu for modeling END -->
 
-
-
-
         <v-menu bottom offset-y>
             <template v-slot:activator="{ on }">
                 <span v-on="on">
@@ -146,7 +142,6 @@
                     <v-list-item-title class="pa-0">
                         <v-checkbox class="pa-2"
                                     @change="menuStatClickHandle(index)"
-                                    v-model="menuItems"
                                     :value="item"
                                     :label="item"></v-checkbox>
                     </v-list-item-title>
@@ -198,10 +193,6 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-
-
-
-
 
         <!-- ABOUT DIALOG -->
         <v-dialog v-model="aboutDialog" fullscreen
@@ -308,14 +299,17 @@
                     <v-spacer></v-spacer>
                 </v-toolbar>
 
-                <template v-if="this.$store.getters.OSC_CHANNELS !== []">
+                <template v-if="this.$store.getters.IDS !== []">
                     <v-list three-line subheader>
                         <div v-for="(item, index) in this.$store.getters.IDS" :key="index">
                             <v-list-item-content class="pa-0 ma-0">
                                 <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
                                 <v-list-item-action class="pa-2 ma-0">
-                                    <osc-component :chartData="$store.getters.OSC_CHANNELS[item]" :chartName="$store.getters.NAMES[item]"
-                                                   :chartId="item" :countSteps="infoObject.countSteps" :timeValue="1000.0/infoObject.countGiges"
+                                    <osc-component :chartData="$store.getters.CHANNELS[item]"
+                                                   :chartName="$store.getters.NAMES[item]"
+                                                   :chartId="item"
+                                                   :countSteps="infoObject.countSteps"
+                                                   :timeValue="1000.0 / infoObject.countGiges"
                                                    :firstDate="infoObject.startDate">
                                     </osc-component>
                                 </v-list-item-action>
@@ -391,7 +385,8 @@
                       :key="index" class="pa-0 ma-0"
               >
                 <channel-component
-                        :chartData="data" :chartName="$store.getters.NAMES[index]"
+                        :chartData="data"
+                        :chartName="$store.getters.NAMES[index]"
                         :chartId="index"
                 >
                 </channel-component>
@@ -401,15 +396,16 @@
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
-
     </v-col>
   </div>
 </template>
 
 <script>
-  import ChannelComponent from "@/components/ChannelComponent";
-  import OscComponent from "@/components/OscComponent";
-  import SuperComponent from "@/components/SuperComponent";
+  import ChannelComponent from "../components/ChannelComponent";
+  import OscComponent from "../components/OscComponent";
+  import SuperComponent from "../components/SuperComponent";
+
+  import modeling from "../modeling/modeling.js";
 
   export default {
       name: "ComputerGraphicsComponent",
@@ -431,658 +427,477 @@
               generationFunctions: [
                   {
                       'name': 'Задержанный единичный импульс',
-                      'function': this.functionForModeling1,
+                      'function': this.functionForGeneration1,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 100
+                          },
+                          {
+                              'key': 'n0',
+                              'value': 50
+                          },
+                      ]
                   },
                   {
                       'name': 'Задержанный единичный скачок',
-                      'function': this.functionForModeling2,
+                      'function': this.functionForGeneration2,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 100
+                          },
+                          {
+                              'key': 'n0',
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Дискретизированная убывающая экспонента',
-                      'function': this.functionForModeling3,
+                      'function': this.functionForGeneration3,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 10
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Дискретизированная синусоида',
-                      'function': this.functionForModeling4,
+                      'function': this.functionForGeneration4,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 50
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C9 (π)',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C6 (π)',
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': '«Mеандр» (прямоугольная решетка) с периодом L',
-                      'function': this.functionForModeling5,
+                      'function': this.functionForGeneration5,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 100
+                          },
+                          {
+                              'key': 'L',
+                              'value': 20
+                          },
+                      ]
                   },
                   {
                       'name': '“Пила” с периодом L',
-                      'function': this.functionForModeling6,
+                      'function': this.functionForGeneration6,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 100
+                          },
+                          {
+                              'key': 'L',
+                              'value': 20
+                          },
+                      ]
                   },
                   {
                       'name': 'Сигнал с экспоненциальной огибающей - амплитудная модуляция',
-                      'function': this.functionForModeling7,
+                      'function': this.functionForGeneration7,
+                      'params': [
+                          {
+                              'key': 'fd',
+                              'value': 0
+                          },
+                          {
+                              'key': 'T',
+                              'value': 0
+                          },
+                          {
+                              'key': 't',
+                              'value': 0
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C4', //тетта
+                              'value': 0
+                          },
+                          {
+                              'key': 'f',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C6', //фи
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Сигнал с балансной огибающей - амплитудная модуляция',
-                      'function': this.functionForModeling8,
+                      'function': this.functionForGeneration8,
+                      'params': [
+                          {
+                              'key': 'fd',
+                              'value': 0
+                          },
+                          {
+                              'key': 'T',
+                              'value': 0
+                          },
+                          {
+                              'key': 't',
+                              'value': 0
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': 'f0',
+                              'value': 0
+                          },
+                          {
+                              'key': 'fн',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C6', //фи
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Сигнал с тональной огибающей. - амплитудная модуляция',
-                      'function': this.functionForModeling9,
+                      'function': this.functionForGeneration9,
+                      'params': [
+                          {
+                              'key': 'fd',
+                              'value': 0
+                          },
+                          {
+                              'key': 'T',
+                              'value': 0
+                          },
+                          {
+                              'key': 't',
+                              'value': 0
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': 'm',
+                              'value': 0
+                          },
+                          {
+                              'key': 'f0',
+                              'value': 0
+                          },
+                          {
+                              'key': 'fн',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C6', //фи
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Сигнала белого шума, равномерно распределенного в интервале [a,b]',
-                      'function': this.functionForModeling10,
+                      'function': this.functionForGeneration10,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 0
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': 'b',
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Сигнала белого шума, распределенного по нормальному закону с заданными средним и дисперсией',
-                      'function': this.functionForModeling11,
+                      'function': this.functionForGeneration11,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 0
+                          },
+                          {
+                              'key': 'a',
+                              'value': 0
+                          },
+                          {
+                              'key': '\u03C3^2',
+                              'value': 0
+                          },
+                      ]
                   },
                   {
                       'name': 'Случайного сигнал авторегрессии-скользящего среднего порядка (p,q) – АРСС (p,q)',
-                      'function': this.functionForModeling12,
+                      'function': this.functionForGeneration12,
+                      'params': [
+                          {
+                              'key': 'n',
+                              'value': 10
+                          },
+                          {
+                              'key': 'p',
+                              'value': 6
+                          },
+                          {
+                              'key': 'q',
+                              'value': 3
+                          },
+                          {
+                              'key': '\u03C3^2',
+                              'value': 1
+                          },
+                          {
+                              'key': 'a',
+                              'value': '-4.167, 7.940, -9.397, 7.515, -3.752, 0.862'
+                          },
+                          {
+                              'key': 'b',
+                              'value': '-2.28, 1.77, -0.472'
+                          },
+                      ]
                   },
               ],
-              menuItems: [],
+
               persons: [
                   'Маковей Никита',
                   'Романенкова Людмила',
                   'Лоншакова Анастасия',
                   'Ващенко Светлана',
-                  'Гасанова Сабина',
+                  'Гасанова Сабина'
               ],
+
               aboutDialog: false,
               infoDialog: false,
               superDialog: false,
 
               infoObject: {
-                  countChannels: null,
-                  countSteps: null,
-                  countGiges: null,
-                  startDate: null,
-                  endDate: null,
+                  countChannels: 0,
+                  countSteps: 0,
+                  countGiges: 0,
+                  startDate: new Date(0),
+                  endDate: new Date(0),
                   date: {
-                      days: null,
-                      hours: null,
-                      minutes: null,
-                      seconds: null
+                      days: 0,
+                      hours: 0,
+                      minutes: 0,
+                      seconds: 0
                   }
               },
 
-              fileSource: null
-
+              fileSource: null // TODO: ???
           }
       },
       methods: {
-          functionForRandomization: function (a, b) {
-              return (a + (b - a) * Math.random())
-          },
-          functionForNormalRandomization: function (a, q) {
-              let s = 0;
-              for (let i = 0; i < 12; i++) {
-                  s += Math.random();
-              }
-              return (a + Math.sqrt(q) * (s - 6))
-          },
           functionForReplacing: function (channelArray) {
-              let NAMES = this.$store.getters.NAMES;
+              let NAMES = [];
+              let CHANNELS = [];
+
+              if (channelArray.length === this.infoObject.countSteps) { // TODO: ???
+                  NAMES = this.$store.getters.NAMES;
+                  CHANNELS = this.$store.getters.CHANNELS;
+
+                  this.infoObject.countChannels++;
+              } else {
+                  this.fileSource = null; // TODO: ???
+
+                  this.infoObject = {
+                      countChannels: 1,
+                      countSteps: channelArray.length,
+                      countGiges: 1, // TODO: ???
+                      startDate: new Date(0),
+                      endDate: new Date(0),
+                      date: { days: 0, hours: 0, minutes: 0, seconds: 0 }
+                  };
+              }
+
               NAMES.push(this.generationFunctionDialog.name);
-              this.$store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
-              let CHANNELS = this.$store.getters.CHANNELS;
               CHANNELS.push(channelArray);
+
+              this.$store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
               this.$store.dispatch('UPDATE_CHANNELS', CHANNELS);
-              this.infoObject.countSteps = channelArray.length;
-              this.infoObject.countGiges = 1;
           },
-          functionForGeneration1: function (...params) {
+          functionForGeneration: function (parseFunc) {
               this.superDialog = false;
               this.generationFunctionDialog.values = [];
               this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let n0 = 1 * this.generationFunctionDialog.params[1].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  if (i === n0) {
-                      channelArray.push(1);
-                  } else {
-                      channelArray.push(0);
+
+              const channelArray = parseFunc()
+
+              this.generationFunctionDialog.countSteps = channelArray.length;
+              this.generationFunctionDialog.values = channelArray;
+              this.functionForReplacing(channelArray);
+          },
+          functionForGeneration1: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let n0 = 1 * this.generationFunctionDialog.params[1].value;
+
+                  return modeling.functionForGeneration1(n, n0);
+              });
+          },
+          functionForGeneration2: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let n0 = 1 * this.generationFunctionDialog.params[1].value;
+
+                  return modeling.functionForGeneration2(n, n0);
+              });
+          },
+          functionForGeneration3: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[1].value;
+
+                  return modeling.functionForGeneration3(n, a);
+              });
+          },
+          functionForGeneration4: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[1].value;
+                  let omega = 1.0 * this.generationFunctionDialog.params[2].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[3].value;
+
+                  return modeling.functionForGeneration4(n, a, omega, fi);
+              });
+          },
+          functionForGeneration5: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let L = 1.0 * this.generationFunctionDialog.params[1].value;
+
+                  return modeling.functionForGeneration5(n, L);
+              });
+          },
+          functionForGeneration6: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let L = 1.0 * this.generationFunctionDialog.params[1].value;
+
+                  return modeling.functionForGeneration6(n, L);
+              });
+          },
+          functionForGeneration7: function () {
+              this.functionForGeneration(() => {
+                  let t = 1 * this.generationFunctionDialog.params[2].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let tau = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let f = 1.0 * this.generationFunctionDialog.params[5].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[6].value;
+
+                  return modeling.functionForGeneration7(t, a, tau, f, fi)
+              });
+          },
+          functionForGeneration8: function () {
+              this.functionForGeneration(() => {
+                  let t = 1 * this.generationFunctionDialog.params[2].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let f0 = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let fn = 1.0 * this.generationFunctionDialog.params[5].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[6].value;
+
+                  return modeling.functionForGeneration8(t, a, f0, fn, fi);
+              });
+          },
+          functionForGeneration9: function () {
+              this.functionForGeneration(() => {
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let t = 1 * this.generationFunctionDialog.params[2].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let m = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
+                  let fn = 1.0 * this.generationFunctionDialog.params[6].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+
+                  return modeling.functionForGeneration9(fd, t, a, m, f0, fn, fi);
+              });
+          },
+          functionForGeneration10: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let a = 1 * this.generationFunctionDialog.params[1].value;
+                  let b = 1 * this.generationFunctionDialog.params[2].value;
+
+                  return modeling.functionForGeneration10(n, a, b);
+              });
+          },
+          functionForGeneration11: function () {
+              this.functionForGeneration(() => {
+                  let n = 1 * this.generationFunctionDialog.params[0].value;
+                  let a = 1 * this.generationFunctionDialog.params[1].value;
+                  let sigma = 1 * this.generationFunctionDialog.params[2].value;
+
+                  return modeling.functionForGeneration11(n, a, sigma);
+              });
+          },
+          functionForGeneration12: function () {
+              this.functionForGeneration(() => {
+                  let n = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let p = 1 * this.generationFunctionDialog.params[1].value;
+                  let q = 1 * this.generationFunctionDialog.params[2].value;
+                  let sigma = 1 * this.generationFunctionDialog.params[3].value;
+
+                  let aArray = [];
+                  let bArray = [];
+                  if (this.generationFunctionDialog.params[4].value.length > 0) {
+                      aArray = this.generationFunctionDialog.params[4].value.split(', ')
                   }
-              }
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration2: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let n0 = 1 * this.generationFunctionDialog.params[1].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  if (i < n0) {
-                      channelArray.push(0);
-                  } else {
-                      channelArray.push(1);
-                  }
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration3: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let a = 1.0 * this.generationFunctionDialog.params[1].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  channelArray.push(Math.pow(a, i));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration4: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let a = 1.0 * this.generationFunctionDialog.params[1].value;
-              let omega = 1.0 * this.generationFunctionDialog.params[2].value;
-              let fi = 1.0 * this.generationFunctionDialog.params[3].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  channelArray.push(a * Math.sin(i * omega + fi));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration5: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              // if double value the {value} * 1.0
-              // if int value the {value} * 1
-              // if you will do it then you may use '===' instead of '=='
-              // it's javascript, babe :)
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let L = 1.0 * this.generationFunctionDialog.params[1].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  if ((i % L) < L / 2) {
-                      channelArray.push(1);
-                  } else {
-                      channelArray.push(-1);
-                  }
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration6: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let L = 1.0 * this.generationFunctionDialog.params[1].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  channelArray.push((i % L) / L);
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration7: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-              let T = 1.0 * this.generationFunctionDialog.params[1].value;
-              let t = 1 * this.generationFunctionDialog.params[2].value;
-              let a = 1.0 * this.generationFunctionDialog.params[3].value;
-              let tau = 1.0 * this.generationFunctionDialog.params[4].value;
-              let f = 1.0 * this.generationFunctionDialog.params[5].value;
-              let fi = 1.0 * this.generationFunctionDialog.params[6].value;
-              let channelArray = [];
-              for (let i = 0; i <= t; i++) {
-                  channelArray.push(a * Math.exp(-i / tau) * Math.cos(2 * Math.PI * f * i + fi));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = t;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration8: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-              let T = 1.0 * this.generationFunctionDialog.params[1].value;
-              let t = 1 * this.generationFunctionDialog.params[2].value;
-              let a = 1.0 * this.generationFunctionDialog.params[3].value;
-              let f0 = 1.0 * this.generationFunctionDialog.params[4].value;
-              let fn = 1.0 * this.generationFunctionDialog.params[5].value;
-              let fi = 1.0 * this.generationFunctionDialog.params[6].value;
-              let channelArray = [];
-              for (let i = 0; i <= t; i++) {
-                  channelArray.push(a * Math.cos(2 * Math.PI * f0 * i) * Math.cos(2 * Math.PI * fn * i + fi));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = t;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration9: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-              let T = 1.0 * this.generationFunctionDialog.params[1].value;
-              T = 1.0 / fd;
-              let t = 1 * this.generationFunctionDialog.params[2].value;
-              let a = 1.0 * this.generationFunctionDialog.params[3].value;
-              let m = 1.0 * this.generationFunctionDialog.params[4].value;
-              let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
-              let fn = 1.0 * this.generationFunctionDialog.params[6].value;
-              let fi = 1.0 * this.generationFunctionDialog.params[7].value;
-              let channelArray = [];
-              for (let i = 0; i < t; i++) {
-                  channelArray.push(a * (1 + m * Math.cos(2 * Math.PI * f0 * T * i)) * Math.cos(2 * Math.PI * fn * T * i + fi));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = t - 1;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration10: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let a = 1 * this.generationFunctionDialog.params[1].value;
-              let b = 1 * this.generationFunctionDialog.params[2].value;
-              console.log(a, b);
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  channelArray.push(this.functionForRandomization(a, b));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration11: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-              let n = 1 * this.generationFunctionDialog.params[0].value;
-              let a = 1 * this.generationFunctionDialog.params[1].value;
-              let sigma = 1 * this.generationFunctionDialog.params[2].value;
-              let channelArray = [];
-              for (let i = 0; i <= n; i++) {
-                  channelArray.push(this.functionForNormalRandomization(a, sigma));
-              }
-              console.log(channelArray);
-              this.generationFunctionDialog.countSteps = n;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
-          },
-          functionForGeneration12: function (...params) {
-              this.superDialog = false;
-              this.generationFunctionDialog.values = [];
-              this.generationFunctionDialog.status = false;
-
-              let n = 1.0 * this.generationFunctionDialog.params[0].value;
-              let p = 1 * this.generationFunctionDialog.params[1].value;
-              let q = 1 * this.generationFunctionDialog.params[2].value;
-              let sigma = 1 * this.generationFunctionDialog.params[3].value;
-
-              let channelArray = [];
-
-              let aArray; //= [-4.167, 7.940, -9.397, 7.515, -3.752, 0.862];
-              let bArray;// = [-2.28, 1.77, -0.472];
-              if (this.generationFunctionDialog.params[4].value.length > 0) {
-                  aArray = this.generationFunctionDialog.params[4].value.split(', ')
-              }
-              if (this.generationFunctionDialog.params[5].value.length > 0) {
-                  bArray = this.generationFunctionDialog.params[5].value.split(', ')
-              }
-              console.log(aArray);
-              console.log(bArray);
-              let xArray = [];
-              let yArray = [];
-
-              // console.log(aArray);
-              // console.log(bArray);
-
-              for (let j = 0; j < n; j++) {
-                  let sum1 = 0;
-                  let sum2 = 0;
-                  xArray.push(this.functionForNormalRandomization(0, sigma));
-
-                  for (let i = 0; i < q; i++) {
-                      if ((j - i) > 0) {
-                          sum1 += bArray[i] * xArray[j - i - 1];
-                      }
+                  if (this.generationFunctionDialog.params[5].value.length > 0) {
+                      bArray = this.generationFunctionDialog.params[5].value.split(', ')
                   }
 
-                  if (j > 0) {
-                      for (let i = 0; i < p; i++) {
-                          //if (((j - i) > 0) && (j - i < j)) {
-                          if ((j - i) > 0) {
-                              sum2 += aArray[i] * yArray[j - i - 1];
-                          }
-                          //}
-                      }
-                  }
-
-                  yArray.push(xArray[j] + sum1 - sum2);
-                  channelArray.push(xArray[j] + sum1 - sum2);
-              }
-              console.table(xArray);
-              this.generationFunctionDialog.countSteps = n - 1;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
-              //setTimeout(() => { this.superDialog = true; }, 1000);
+                  return modeling.functionForGeneration12(n, p, q, sigma, aArray, bArray);
+              });
           },
-          functionForModeling1: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[0].name;
-              this.generationFunctionDialog.function = this.functionForGeneration1;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 100
-                  },
-                  {
-                      'key': 'n0',
-                      'value': 50
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling2: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[1].name;
-              this.generationFunctionDialog.function = this.functionForGeneration2;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 100
-                  },
-                  {
-                      'key': 'n0',
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling3: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[2].name;
-              this.generationFunctionDialog.function = this.functionForGeneration3;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 10
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling4: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[3].name;
-              this.generationFunctionDialog.function = this.functionForGeneration4;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 50
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C9 (π)',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C6 (π)',
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling5: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[4].name;
-              this.generationFunctionDialog.function = this.functionForGeneration5;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 100
-                  },
-                  {
-                      'key': 'L',
-                      'value': 20
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling6: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[5].name;
-              this.generationFunctionDialog.function = this.functionForGeneration6;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 100
-                  },
-                  {
-                      'key': 'L',
-                      'value': 20
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling7: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[6].name;
-              this.generationFunctionDialog.function = this.functionForGeneration7;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'fd',
-                      'value': 0
-                  },
-                  {
-                      'key': 'T',
-                      'value': 0
-                  },
-                  {
-                      'key': 't',
-                      'value': 0
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C4', //тетта
-                      'value': 0
-                  },
-                  {
-                      'key': 'f',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C6', //фи
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling8: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[7].name;
-              this.generationFunctionDialog.function = this.functionForGeneration8;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'fd',
-                      'value': 0
-                  },
-                  {
-                      'key': 'T',
-                      'value': 0
-                  },
-                  {
-                      'key': 't',
-                      'value': 0
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': 'f0',
-                      'value': 0
-                  },
-                  {
-                      'key': 'fн',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C6', //фи
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling9: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[8].name;
-              this.generationFunctionDialog.function = this.functionForGeneration9;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'fd',
-                      'value': 0
-                  },
-                  {
-                      'key': 'T',
-                      'value': 0
-                  },
-                  {
-                      'key': 't',
-                      'value': 0
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': 'm',
-                      'value': 0
-                  },
-                  {
-                      'key': 'f0',
-                      'value': 0
-                  },
-                  {
-                      'key': 'fн',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C6', //фи
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling10: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[9].name;
-              this.generationFunctionDialog.function = this.functionForGeneration10;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 0
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': 'b',
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling11: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[10].name;
-              this.generationFunctionDialog.function = this.functionForGeneration11;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 0
-                  },
-                  {
-                      'key': 'a',
-                      'value': 0
-                  },
-                  {
-                      'key': '\u03C3^2',
-                      'value': 0
-                  },
-              ];
-              this.generationFunctionDialog.status = true;
-          },
-          functionForModeling12: function (...params) {
-              this.generationFunctionDialog.name = this.generationFunctions[11].name;
-              this.generationFunctionDialog.function = this.functionForGeneration12;
-              this.generationFunctionDialog.params = [
-                  {
-                      'key': 'n',
-                      'value': 10
-                  },
-                  {
-                      'key': 'p',
-                      'value': 6
-                  },
-                  {
-                      'key': 'q',
-                      'value': 3
-                  },
-                  {
-                      'key': '\u03C3^2',
-                      'value': 1
-                  },
-                  {
-                      'key': 'a',
-                      'value': '-4.167, 7.940, -9.397, 7.515, -3.752, 0.862'
-                  },
-                  {
-                      'key': 'b',
-                      'value': '-2.28, 1.77, -0.472'
-                  },
-              ];
+          functionForModeling: function (idx) {
+              this.generationFunctionDialog.name = this.generationFunctions[idx].name;
+              this.generationFunctionDialog.function = this.generationFunctions[idx].function;
+              this.generationFunctionDialog.params = this.generationFunctions[idx].params;
               this.generationFunctionDialog.status = true;
           },
           menuStatusHandle: function (key) {
-              let ids = this.$store.getters.IDS;
-              let is_pushed = false;
+              const ids = this.$store.getters.IDS;
+
               for (let i = 0; i !== ids.length; i++) {
-                  if (ids[i] === key) is_pushed = true;
+                  if (ids[i] === key) {
+                      return true;
+                  }
               }
-              return is_pushed;
+
+              return false;
           },
           menuClickHandle: function (key, event) {
               if (this.menuStatusHandle(key)) {
@@ -1091,34 +906,32 @@
                   this.menuEventHandle(key, event);
               }
           },
-          menuStatClickHandle: function (key, event) {
+          menuStatClickHandle: function (key) {
               this.$store.dispatch('UPDATE_STAT_DIALOG', true);
               this.$store.dispatch('UPDATE_STAT_ID', key);
           },
-          menuCloseHandle: function (key, event) {
+          menuCloseHandle: function (key) {
               this.$store.dispatch('DELETE_ITEM_FROM_OSC', key).then(() => {
                   if (this.$store.getters.IDS.length === 0) {
                       this.$store.dispatch('UPDATE_OSC_DIALOG', false);
                   }
               })
           },
-          menuEventHandle: function (key, event) {
-              console.log(key);
-              let ids = this.$store.getters.IDS;
+          menuEventHandle: function (key) {
+              const ids = this.$store.getters.IDS;
               let is_pushed = false;
               for (let i = 0; i !== ids.length; i++) {
-                  if (ids[i] === key) is_pushed = true;
+                  if (ids[i] === key) {
+                      is_pushed = true;
+                      break;
+                  }
               }
 
               if (!is_pushed) {
-                  this.$store.dispatch('UPDATE_IDS', key);
-                  this.$store.dispatch('UPDATE_OSC_CHANNELS', this.$store.getters.CHANNELS[key]);
+                  this.$store.dispatch('UPDATE_IDS', key).then(() => {
+                      this.$store.dispatch('UPDATE_OSC_DIALOG', true);
+                  });
               }
-
-              this.$store.dispatch('UPDATE_OSC_DIALOG', true);
-          },
-          showInfo: function () {
-              //
           },
           loadFile: function (e) {
               const file = e.target.files[0];
@@ -1133,23 +946,40 @@
           readFile: function (file) {
               this.$store.dispatch('CLEAR_OSC');
               this.$store.dispatch('UPDATE_OSC_DIALOG', false);
-              let CHANNELS = null;
+
+              let CHANNELS = [];
+              let NAMES = [];
+
               const reader = new FileReader();
               const store = this.$store;
               const vm = this;
-              let infoObject = this.infoObject;
+              let infoObject = {
+                  countChannels: 0,
+                  countSteps: 0,
+                  countGiges: 0,
+                  startDate: new Date(0),
+                  endDate: new Date(0),
+                  date: {
+                      days: 0,
+                      hours: 0,
+                      minutes: 0,
+                      seconds: 0
+                  }
+              };
+
               reader.onload = function () {
-                  let cnt = 0;
-                  const DATA = reader.result.split("\n").filter(x => x.length !== 0).map(function (d) {
+                  reader.result.split("\n").filter(x => x.length !== 0).forEach(function (d, cnt) {
                       let delta = d.trim().split(" ");
 
                       if (cnt < 12) {
 
                           if (cnt === 1) {
-                              let countChannels = Number(delta[0]);
+                              const countChannels = Number(delta[0]);
+
                               if (countChannels > 0 && countChannels !== null) {
                                   infoObject.countChannels = countChannels;
                                   CHANNELS = new Array(countChannels);
+
                                   for (let i = 0; i < countChannels; i++) {
                                       CHANNELS[i] = new Array(0);
                                   }
@@ -1157,10 +987,6 @@
                           }
 
                           if (cnt === 3) {
-                              if (Number(delta[delta.length - 1]) !== infoObject.countSteps) {
-                                  vm.$store.dispatch("UPDATE_CHANNELS", []);
-                              }
-
                               infoObject.countSteps = Number(delta[delta.length - 1]);
                           }
 
@@ -1176,7 +1002,6 @@
                               let dateBeforeSpace = (infoObject.startDate).split('-');
                               let dateAfterSpace = ((delta[0].split('.'))[0]).split(':');
                               let time = 1000 * (infoObject.countSteps * (1.0 / infoObject.countGiges));
-                              console.log(time);
 
                               let year = Number(dateBeforeSpace[2]);
                               let month = Number(dateBeforeSpace[1]);
@@ -1195,65 +1020,84 @@
                               let difference = endDate - startDate;
 
                               infoObject.date.days =
-                                  parseInt((difference / (1000 * 60 * 60 * 24)).toString());
+                                      parseInt((difference / (1000 * 60 * 60 * 24)).toString());
                               infoObject.date.hours =
-                                  parseInt(((difference / (1000 * 60 * 60)) % 24).toString());
+                                      parseInt(((difference / (1000 * 60 * 60)) % 24).toString());
                               infoObject.date.minutes =
-                                  parseInt(((difference / (1000 * 60)) % 60).toString());
+                                      parseInt(((difference / (1000 * 60)) % 60).toString());
                               infoObject.date.seconds =
-                                  parseInt(((difference / 1000) % 60).toString());
+                                      parseInt(((difference / 1000) % 60).toString());
                           }
 
                           if (cnt === 11) {
-                              const CHANNELS_NAMES = d.split(";");
-                              store.dispatch('UPDATE_CHANNEL_NAMES', CHANNELS_NAMES);
+                              NAMES = d.split(";");
                           }
                       } else {
                           for (let i = 0; i < infoObject.countChannels; i++) {
                               CHANNELS[i].push(Number(delta[i]));
                           }
                       }
-                      cnt++;
                   });
-                  store.dispatch('UPDATE_CHANNELS', CHANNELS).then(() => {
-                      vm.drawChannels();
-                  })
+
+                  if (vm.infoObject.countChannels !== infoObject.countChannels) {
+                      vm.infoObject = infoObject;
+                  } else {
+                      vm.infoObject.countChannels++;
+
+                      CHANNELS = store.getters.CHANNELS.concat(CHANNELS);
+                      NAMES = store.getters.NAMES.concat(NAMES);
+                  }
+
+                  store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
+                  store.dispatch('UPDATE_CHANNELS', CHANNELS)
               };
+
               reader.readAsText(file);
           },
-          drawChannels: function () {
-              // TODO: something...
+          OrderStatistic: function (p) {
+              let channelId = this.$store.getters.STAT_ID;
+              let channels = this.$store.getters.CHANNELS;
+
+              if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
+                  let channelSort = [...channels[channelId]].sort();
+
+                  return channelSort[Math.floor(p * channels[channelId].length)];
+              }
+
+              return 0;
           }
       },
       computed: {
           Average: function () {
               let channelId = this.$store.getters.STAT_ID;
-              let avgSum = 0;
               let channels = this.$store.getters.CHANNELS;
+
+              let average = 0;
 
               if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
                   for (let i = 0; i < channels[channelId].length; i++) {
-                      avgSum += channels[channelId][i];
+                      average += channels[channelId][i];
                   }
-                  avgSum /= channels[channelId].length;
+                  average /= channels[channelId].length;
               }
 
-              return avgSum;
+              return average;
           },
           Dispersion: function () {
               let channelId = this.$store.getters.STAT_ID;
-              let avgSum = this.Average;
               let channels = this.$store.getters.CHANNELS;
-              let disp = 0;
+
+              let average = this.Average;
+              let dispersion = 0;
 
               if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
                   for (let i = 0; i < channels[channelId].length; i++) {
-                      disp += Math.pow(channels[channelId][i] - avgSum, 2);
+                      dispersion += Math.pow(channels[channelId][i] - average, 2);
                   }
-                  disp /= channels[channelId].length;
+                  dispersion /= channels[channelId].length;
               }
 
-              return disp;
+              return dispersion;
           },
           AvgDeviation: function () {
               return Math.sqrt(this.Dispersion);
@@ -1267,29 +1111,31 @@
           },
           Asymmetry: function () {
               let channelId = this.$store.getters.STAT_ID;
-              let avgSum = this.Average;
               let channels = this.$store.getters.CHANNELS;
-              let ass = 0;
+
+              let average = this.Average;
+              let asymmetry = 0;
 
               if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
                   for (let i = 0; i < channels[channelId].length; i++) {
-                      ass += Math.pow(channels[channelId][i] - avgSum, 3);
+                      asymmetry += Math.pow(channels[channelId][i] - average, 3);
                   }
-                  ass /= channels[channelId].length;
-                  ass /= Math.pow(this.AvgDeviation, 3)
+                  asymmetry /= channels[channelId].length;
+                  asymmetry /= Math.pow(this.AvgDeviation, 3)
               }
 
-              return ass;
+              return asymmetry;
           },
           Excess: function () {
               let channelId = this.$store.getters.STAT_ID;
-              let avgSum = this.Average;
               let channels = this.$store.getters.CHANNELS;
+
+              let average = this.Average;
               let excess = 0;
 
               if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
                   for (let i = 0; i < channels[channelId].length; i++) {
-                      excess += Math.pow(channels[channelId][i] - avgSum, 4);
+                      excess += Math.pow(channels[channelId][i] - average, 4);
                   }
                   excess /= channels[channelId].length;
                   excess /= Math.pow(this.AvgDeviation, 4)
@@ -1302,7 +1148,7 @@
               let channels = this.$store.getters.CHANNELS;
 
               if (channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0) {
-                return Math.min(...channels[channelId]);
+                  return Math.min(...channels[channelId]);
               }
 
               return 0;
@@ -1318,43 +1164,14 @@
               return 0;
           },
           Quantile1: function () {
-              let channelId = this.$store.getters.STAT_ID;
-              let channels = this.$store.getters.CHANNELS;
-
-              if (!(channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
-                  return 0;
-              }
-
-              let channelSort = [...channels[channelId]].sort();
-
-              return channelSort[Math.floor(0.05 * channels[channelId].length)]
+              return this.OrderStatistic(0.05)
           },
           Quantile2: function () {
-              let channelId = this.$store.getters.STAT_ID;
-              let channels = this.$store.getters.CHANNELS;
-
-              if (!(channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
-                  return 0;
-              }
-
-              let channelSort = [...channels[channelId]].sort();
-
-              return channelSort[Math.floor(0.95 * channels[channelId].length)]
-
+              return this.OrderStatistic(0.95)
           },
           Median: function () {
-              let channelId = this.$store.getters.STAT_ID;
-              let channels = this.$store.getters.CHANNELS;
-
-              if (!(channels !== null && channels.length > 0 && this.$store.getters.STAT_DIALOG && channels[channelId].length !== 0)) {
-                  return 0;
-              }
-
-              let channelSort = [...channels[channelId]].sort();
-
-              return channelSort[Math.floor(0.5 * channels[channelId].length)]
-          }
-
+              return this.OrderStatistic(0.5)
+          },
       }
   }
 </script>
