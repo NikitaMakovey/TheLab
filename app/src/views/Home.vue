@@ -429,264 +429,126 @@
                       'name': 'Задержанный единичный импульс',
                       'function': this.functionForGeneration1,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 100
-                          },
-                          {
-                              'key': 'n0',
-                              'value': 50
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 100},
+                          {'key': 'n0', 'value': 50}
                       ]
                   },
                   {
                       'name': 'Задержанный единичный скачок',
                       'function': this.functionForGeneration2,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 100
-                          },
-                          {
-                              'key': 'n0',
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 100},
+                          {'key': 'n0', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Дискретизированная убывающая экспонента',
                       'function': this.functionForGeneration3,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 10
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 10},
+                          {'key': 'a', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Дискретизированная синусоида',
                       'function': this.functionForGeneration4,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 50
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C9 (π)',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C6 (π)',
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 50},
+                          {'key': 'a', 'value': 0},
+                          {'key': '\u03C9 (π)', 'value': 0},
+                          {'key': '\u03C6 (π)', 'value': 0}
                       ]
                   },
                   {
                       'name': '«Mеандр» (прямоугольная решетка) с периодом L',
                       'function': this.functionForGeneration5,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 100
-                          },
-                          {
-                              'key': 'L',
-                              'value': 20
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 100},
+                          {'key': 'L', 'value': 20}
                       ]
                   },
                   {
                       'name': '“Пила” с периодом L',
                       'function': this.functionForGeneration6,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 100
-                          },
-                          {
-                              'key': 'L',
-                              'value': 20
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 100},
+                          {'key': 'L', 'value': 20}
                       ]
                   },
                   {
                       'name': 'Сигнал с экспоненциальной огибающей - амплитудная модуляция',
                       'function': this.functionForGeneration7,
                       'params': [
-                          {
-                              'key': 'fd',
-                              'value': 0
-                          },
-                          {
-                              'key': 'T',
-                              'value': 0
-                          },
-                          {
-                              'key': 't',
-                              'value': 0
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C4', //тетта
-                              'value': 0
-                          },
-                          {
-                              'key': 'f',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C6', //фи
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 't', 'value': 0},
+                          {'key': 'a', 'value': 0},
+                          {'key': '\u03C4', 'value': 0},
+                          {'key': 'f', 'value': 0},
+                          {'key': '\u03C6', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Сигнал с балансной огибающей - амплитудная модуляция',
                       'function': this.functionForGeneration8,
                       'params': [
-                          {
-                              'key': 'fd',
-                              'value': 0
-                          },
-                          {
-                              'key': 'T',
-                              'value': 0
-                          },
-                          {
-                              'key': 't',
-                              'value': 0
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': 'f0',
-                              'value': 0
-                          },
-                          {
-                              'key': 'fн',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C6', //фи
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 't', 'value': 0},
+                          {'key': 'a', 'value': 0},
+                          {'key': 'f0', 'value': 0},
+                          {'key': 'fн', 'value': 0},
+                          {'key': '\u03C6', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Сигнал с тональной огибающей. - амплитудная модуляция',
                       'function': this.functionForGeneration9,
                       'params': [
-                          {
-                              'key': 'fd',
-                              'value': 0
-                          },
-                          {
-                              'key': 'T',
-                              'value': 0
-                          },
-                          {
-                              'key': 't',
-                              'value': 0
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': 'm',
-                              'value': 0
-                          },
-                          {
-                              'key': 'f0',
-                              'value': 0
-                          },
-                          {
-                              'key': 'fн',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C6', //фи
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 't', 'value': 0},
+                          {'key': 'a', 'value': 0},
+                          {'key': 'm', 'value': 0},
+                          {'key': 'f0', 'value': 0},
+                          {'key': 'fн', 'value': 0},
+                          {'key': '\u03C6', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Сигнала белого шума, равномерно распределенного в интервале [a,b]',
                       'function': this.functionForGeneration10,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 0
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': 'b',
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 0},
+                          {'key': 'a', 'value': 0},
+                          {'key': 'b', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Сигнала белого шума, распределенного по нормальному закону с заданными средним и дисперсией',
                       'function': this.functionForGeneration11,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 0
-                          },
-                          {
-                              'key': 'a',
-                              'value': 0
-                          },
-                          {
-                              'key': '\u03C3^2',
-                              'value': 0
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 0},
+                          {'key': 'a', 'value': 0},
+                          {'key': '\u03C3^2', 'value': 0}
                       ]
                   },
                   {
                       'name': 'Случайного сигнал авторегрессии-скользящего среднего порядка (p,q) – АРСС (p,q)',
                       'function': this.functionForGeneration12,
                       'params': [
-                          {
-                              'key': 'n',
-                              'value': 10
-                          },
-                          {
-                              'key': 'p',
-                              'value': 6
-                          },
-                          {
-                              'key': 'q',
-                              'value': 3
-                          },
-                          {
-                              'key': '\u03C3^2',
-                              'value': 1
-                          },
-                          {
-                              'key': 'a',
-                              'value': '-4.167, 7.940, -9.397, 7.515, -3.752, 0.862'
-                          },
-                          {
-                              'key': 'b',
-                              'value': '-2.28, 1.77, -0.472'
-                          },
+                          {'key': 'Sample Rate', 'value': 1},
+                          {'key': 'n', 'value': 10},
+                          {'key': 'p', 'value': 6},
+                          {'key': 'q', 'value': 3},
+                          {'key': '\u03C3^2', 'value': 1},
+                          {'key': 'a', 'value': '-4.167, 7.940, -9.397, 7.515, -3.752, 0.862'},
+                          {'key': 'b', 'value': '-2.28, 1.77, -0.472'}
                       ]
                   },
               ],
@@ -721,11 +583,12 @@
           }
       },
       methods: {
-          functionForReplacing: function (channelArray) {
+          functionForReplacing: function (channelArray, sampleRate) {
               let NAMES = [];
               let CHANNELS = [];
 
-              if (channelArray.length === this.infoObject.countSteps) { // TODO: ???
+              if (channelArray.length === this.infoObject.countSteps &&
+                    sampleRate === this.infoObject.countGiges) {
                   NAMES = this.$store.getters.NAMES;
                   CHANNELS = this.$store.getters.CHANNELS;
 
@@ -736,7 +599,7 @@
                   this.infoObject = {
                       countChannels: 1,
                       countSteps: channelArray.length,
-                      countGiges: 1, // TODO: ???
+                      countGiges: sampleRate,
                       startDate: new Date(0),
                       endDate: new Date(0),
                       date: { days: 0, hours: 0, minutes: 0, seconds: 0 }
@@ -754,132 +617,143 @@
               this.generationFunctionDialog.values = [];
               this.generationFunctionDialog.status = false;
 
-              const channelArray = parseFunc()
+              const channel = parseFunc()
 
-              this.generationFunctionDialog.countSteps = channelArray.length;
-              this.generationFunctionDialog.values = channelArray;
-              this.functionForReplacing(channelArray);
+              this.generationFunctionDialog.countSteps = channel.values.length;
+              this.generationFunctionDialog.values = channel.values;
+              this.functionForReplacing(channel.values, channel.sampleRate);
           },
           functionForGeneration1: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let n0 = 1 * this.generationFunctionDialog.params[1].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let n0 = 1 * this.generationFunctionDialog.params[2].value;
 
-                  return modeling.functionForGeneration1(n, n0);
+                  return {sampleRate: fd, values: modeling.functionForGeneration1(n, n0)};
               });
           },
           functionForGeneration2: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let n0 = 1 * this.generationFunctionDialog.params[1].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let n0 = 1 * this.generationFunctionDialog.params[2].value;
 
-                  return modeling.functionForGeneration2(n, n0);
+                  return {sampleRate: fd, values: modeling.functionForGeneration2(n, n0)};
               });
           },
           functionForGeneration3: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let a = 1.0 * this.generationFunctionDialog.params[1].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[2].value;
 
-                  return modeling.functionForGeneration3(n, a);
+                  return {sampleRate: fd, values: modeling.functionForGeneration3(n, a)};
               });
           },
           functionForGeneration4: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let a = 1.0 * this.generationFunctionDialog.params[1].value;
-                  let omega = 1.0 * this.generationFunctionDialog.params[2].value;
-                  let fi = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[2].value;
+                  let omega = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[4].value;
 
-                  return modeling.functionForGeneration4(n, a, omega, fi);
+                  return {sampleRate: fd, values: modeling.functionForGeneration4(n, a, omega, fi)};
               });
           },
           functionForGeneration5: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let L = 1.0 * this.generationFunctionDialog.params[1].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let L = 1.0 * this.generationFunctionDialog.params[2].value;
 
-                  return modeling.functionForGeneration5(n, L);
+                  return {sampleRate: fd, values: modeling.functionForGeneration5(n, L)};
               });
           },
           functionForGeneration6: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let L = 1.0 * this.generationFunctionDialog.params[1].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let L = 1.0 * this.generationFunctionDialog.params[2].value;
 
-                  return modeling.functionForGeneration6(n, L);
+                  return {sampleRate: fd, values: modeling.functionForGeneration6(n, L)};
               });
           },
           functionForGeneration7: function () {
               this.functionForGeneration(() => {
-                  let t = 1 * this.generationFunctionDialog.params[2].value;
-                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
-                  let tau = 1.0 * this.generationFunctionDialog.params[4].value;
-                  let f = 1.0 * this.generationFunctionDialog.params[5].value;
-                  let fi = 1.0 * this.generationFunctionDialog.params[6].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let t = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[2].value;
+                  let tau = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let f = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[5].value;
 
-                  return modeling.functionForGeneration7(t, a, tau, f, fi)
+                  return {sampleRate: fd, values: modeling.functionForGeneration7(fd, t, a, tau, f, fi)};
               });
           },
           functionForGeneration8: function () {
               this.functionForGeneration(() => {
-                  let t = 1 * this.generationFunctionDialog.params[2].value;
-                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
-                  let f0 = 1.0 * this.generationFunctionDialog.params[4].value;
-                  let fn = 1.0 * this.generationFunctionDialog.params[5].value;
-                  let fi = 1.0 * this.generationFunctionDialog.params[6].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let t = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[2].value;
+                  let f0 = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let fn = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[5].value;
 
-                  return modeling.functionForGeneration8(t, a, f0, fn, fi);
+                  return {sampleRate: fd, values: modeling.functionForGeneration8(fd, t, a, f0, fn, fi)};
               });
           },
           functionForGeneration9: function () {
               this.functionForGeneration(() => {
                   let fd = 1.0 * this.generationFunctionDialog.params[0].value;
-                  let t = 1 * this.generationFunctionDialog.params[2].value;
-                  let a = 1.0 * this.generationFunctionDialog.params[3].value;
-                  let m = 1.0 * this.generationFunctionDialog.params[4].value;
-                  let f0 = 1.0 * this.generationFunctionDialog.params[5].value;
-                  let fn = 1.0 * this.generationFunctionDialog.params[6].value;
-                  let fi = 1.0 * this.generationFunctionDialog.params[7].value;
+                  let t = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1.0 * this.generationFunctionDialog.params[2].value;
+                  let m = 1.0 * this.generationFunctionDialog.params[3].value;
+                  let f0 = 1.0 * this.generationFunctionDialog.params[4].value;
+                  let fn = 1.0 * this.generationFunctionDialog.params[5].value;
+                  let fi = 1.0 * this.generationFunctionDialog.params[6].value;
 
-                  return modeling.functionForGeneration9(fd, t, a, m, f0, fn, fi);
+                  return {sampleRate: fd, values: modeling.functionForGeneration9(fd, t, a, m, f0, fn, fi)};
               });
           },
           functionForGeneration10: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let a = 1 * this.generationFunctionDialog.params[1].value;
-                  let b = 1 * this.generationFunctionDialog.params[2].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1 * this.generationFunctionDialog.params[2].value;
+                  let b = 1 * this.generationFunctionDialog.params[3].value;
 
-                  return modeling.functionForGeneration10(n, a, b);
+                  return {sampleRate: fd, values: modeling.functionForGeneration10(n, a, b)};
               });
           },
           functionForGeneration11: function () {
               this.functionForGeneration(() => {
-                  let n = 1 * this.generationFunctionDialog.params[0].value;
-                  let a = 1 * this.generationFunctionDialog.params[1].value;
-                  let sigma = 1 * this.generationFunctionDialog.params[2].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1 * this.generationFunctionDialog.params[1].value;
+                  let a = 1 * this.generationFunctionDialog.params[2].value;
+                  let sigma = 1 * this.generationFunctionDialog.params[3].value;
 
-                  return modeling.functionForGeneration11(n, a, sigma);
+                  return {sampleRate: fd, values: modeling.functionForGeneration11(n, a, sigma)};
               });
           },
           functionForGeneration12: function () {
               this.functionForGeneration(() => {
-                  let n = 1.0 * this.generationFunctionDialog.params[0].value;
-                  let p = 1 * this.generationFunctionDialog.params[1].value;
-                  let q = 1 * this.generationFunctionDialog.params[2].value;
-                  let sigma = 1 * this.generationFunctionDialog.params[3].value;
+                  let fd = 1.0 * this.generationFunctionDialog.params[0].value;
+                  let n = 1.0 * this.generationFunctionDialog.params[1].value;
+                  let p = 1 * this.generationFunctionDialog.params[2].value;
+                  let q = 1 * this.generationFunctionDialog.params[3].value;
+                  let sigma = 1 * this.generationFunctionDialog.params[4].value;
 
                   let aArray = [];
                   let bArray = [];
-                  if (this.generationFunctionDialog.params[4].value.length > 0) {
-                      aArray = this.generationFunctionDialog.params[4].value.split(', ')
-                  }
                   if (this.generationFunctionDialog.params[5].value.length > 0) {
-                      bArray = this.generationFunctionDialog.params[5].value.split(', ')
+                      aArray = this.generationFunctionDialog.params[5].value.split(', ')
+                  }
+                  if (this.generationFunctionDialog.params[6].value.length > 0) {
+                      bArray = this.generationFunctionDialog.params[6].value.split(', ')
                   }
 
-                  return modeling.functionForGeneration12(n, p, q, sigma, aArray, bArray);
+                  return {sampleRate: fd, values: modeling.functionForGeneration12(n, p, q, sigma, aArray, bArray)};
               });
           },
           functionForModeling: function (idx) {
