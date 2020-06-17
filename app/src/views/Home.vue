@@ -33,7 +33,7 @@
             </template>
             <v-list class="pa-0">
                 <v-list-item>
-                    <v-list-item-title @click.stop="infoDialog = (fileSource !== null)">
+                    <v-list-item-title @click.stop="infoDialog = (infoObject.sources.length !== 0)">
                         Инфо
                     </v-list-item-title>
                 </v-list-item>
@@ -267,7 +267,7 @@
                             <tr v-for="(item, index) in $store.getters.NAMES" :key="item">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ item }}</td>
-                                <td>{{ fileSource }}</td>
+                                <td>{{ infoObject.sources[index] }}</td>
                             </tr>
                         </tbody>
                     </template>
@@ -567,6 +567,7 @@
 
               infoObject: {
                   countChannels: 0,
+                  sources: [],
                   countSteps: 0,
                   countGiges: 0,
                   startDate: new Date(0),
@@ -577,9 +578,7 @@
                       minutes: 0,
                       seconds: 0
                   }
-              },
-
-              fileSource: null // TODO: ???
+              }
           }
       },
       methods: {
@@ -593,11 +592,11 @@
                   CHANNELS = this.$store.getters.CHANNELS;
 
                   this.infoObject.countChannels++;
+                  this.infoObject.sources.push("Modeling");
               } else {
-                  this.fileSource = null; // TODO: ???
-
                   this.infoObject = {
                       countChannels: 1,
+                      sources: ["Modeling"],
                       countSteps: channelArray.length,
                       countGiges: sampleRate,
                       startDate: new Date(0),
@@ -811,7 +810,6 @@
               const file = e.target.files[0];
 
               let fileType = file.type;
-              this.fileSource = file.name;
 
               if (fileType === "text/plain") {
                   this.readFile(file);
@@ -821,14 +819,15 @@
               this.$store.dispatch('CLEAR_OSC');
               this.$store.dispatch('UPDATE_OSC_DIALOG', false);
 
-              let CHANNELS = [];
               let NAMES = [];
+              let CHANNELS = [];
 
               const reader = new FileReader();
               const store = this.$store;
               const vm = this;
               let infoObject = {
                   countChannels: 0,
+                  sources: [],
                   countSteps: 0,
                   countGiges: 0,
                   startDate: new Date(0),
@@ -856,6 +855,7 @@
 
                                   for (let i = 0; i < countChannels; i++) {
                                       CHANNELS[i] = new Array(0);
+                                      infoObject.sources.push(file.name);
                                   }
                               }
                           }
@@ -913,14 +913,7 @@
                       }
                   });
 
-                  if (vm.infoObject.countChannels !== infoObject.countChannels) {
-                      vm.infoObject = infoObject;
-                  } else {
-                      vm.infoObject.countChannels++;
-
-                      CHANNELS = store.getters.CHANNELS.concat(CHANNELS);
-                      NAMES = store.getters.NAMES.concat(NAMES);
-                  }
+                  vm.infoObject = infoObject;
 
                   store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
                   store.dispatch('UPDATE_CHANNELS', CHANNELS)
