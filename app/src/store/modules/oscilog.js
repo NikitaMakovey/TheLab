@@ -23,7 +23,7 @@ export default {
             state.OSC_DIALOG = payload
         },
         REMOVE_ITEM: (state, payload) => {
-            state.IDS.splice(payload, 1);
+            state.IDS.splice(state.IDS.findIndex(x => x === payload), 1);
         },
         REFRESH_STAT_ID: (state, payload) => {
             state.STAT_ID = payload;

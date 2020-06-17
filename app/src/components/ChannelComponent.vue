@@ -5,7 +5,7 @@
                 <a href="#"><b>осциллограмма</b></a>
             </li>
             <li @click="eventHandleStat(chartId)">
-                <a href="#"><b>какашка</b></a>
+                <a href="#"><b>статистика</b></a>
             </li>
         </vue-context>
         <canvas
