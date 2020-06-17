@@ -289,7 +289,7 @@
         </v-dialog>
 
         <!-- OSCILOGRAMM DIALOG -->
-        <v-dialog v-model="this.$store.getters.OSC_DIALOG"
+        <v-dialog :transition="false" v-model="this.$store.getters.OSC_DIALOG"
                   max-width="600"
                   hide-overlay
                   persistent>
