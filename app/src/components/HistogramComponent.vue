@@ -18,6 +18,11 @@
         mounted() {
             this.updateStatChart();
         },
+        watch: {
+            chartData: function () {
+                this.updateStatChart();
+            }
+        },
         data() {
           return {
               chart: null,
