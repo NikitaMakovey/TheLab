@@ -183,6 +183,8 @@
 
                 <label>Медиана: {{ Median.toFixed(3) }}</label>
 
+                <HistogramComponent :chart-data="this.$store.getters.CHANNELS[this.$store.getters.STAT_ID]"></HistogramComponent>
+
                 <v-card-actions class="pa-4 ma-0">
                     <v-spacer></v-spacer>
                     <v-btn color="green darken-1"
@@ -404,12 +406,14 @@
   import ChannelComponent from "../components/ChannelComponent";
   import OscComponent from "../components/OscComponent";
   import SuperComponent from "../components/SuperComponent";
+  import HistogramComponent from "../components/HistogramComponent";
 
   import modeling from "../modeling/modeling.js";
 
   export default {
       name: "ComputerGraphicsComponent",
       components: {
+          HistogramComponent,
           'channel-component': ChannelComponent,
           'osc-component': OscComponent,
           'super-component': SuperComponent,
@@ -578,7 +582,8 @@
                       minutes: 0,
                       seconds: 0
                   }
-              }
+              },
+              chart: null
           }
       },
       methods: {
