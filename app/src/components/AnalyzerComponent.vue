@@ -41,7 +41,7 @@
         // 1 - x(0) = |x(1)|
         // 2 - x(0) = 0
 
-        props: ["chartId", "chartData", "sampleRate", "scalingMode", "zeroMode", "smoothingLength"],
+        props: ["chartId", "chartData", "sampleRate", "scalingMode", "zeroMode", "smoothingLength", "begin", "end"],
         data() {
             return {
                 chart: null
@@ -67,6 +67,12 @@
                 this.updateData();
             },
             smoothingLength: function () {
+                this.updateData();
+            },
+            begin: function () {
+                this.updateData();
+            },
+            end: function () {
                 this.updateData();
             }
         },
@@ -98,11 +104,47 @@
                 return data;
             },
             updateData: function () {
-                am4core.useTheme(am4themes_dataviz);
+                if (this.chart === null) {
+                    am4core.useTheme(am4themes_dataviz);
 
-                this.chart = am4core.create(this.$refs.chartDiv, am4charts.XYChart);
+                    this.chart = am4core.create(this.$refs.chartDiv, am4charts.XYChart);
 
-                let phasors = fft(this.chartData);
+                    let timeAxis = this.chart.xAxes.push(new am4charts.ValueAxis());
+                    timeAxis.extraMax = 0;
+                    timeAxis.extraMin = 0;
+                    timeAxis.strictMinMax = true;
+                    timeAxis.renderer.minGridDistance = 50;
+
+                    let valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
+                    valueAxis.extraMax = 0;
+                    valueAxis.extraMin = 0;
+                    valueAxis.strictMinMax = true;
+
+                    let series = this.chart.series.push(new am4charts.LineSeries());
+                    series.dataFields.valueY = "y";
+                    series.dataFields.valueX = "x";
+                    series.tooltipText = "{valueY}";
+                    series.tooltip.pointerOrientation = "vertical";
+                    series.tooltip.background.fillOpacity = 0.5;
+
+                    this.chart.scrollbarX = new am4charts.XYChartScrollbar();
+                    this.chart.scrollbarX.series.push(series);
+
+                    this.chart.cursor = new am4charts.XYCursor();
+                    this.chart.cursor.xAxis = timeAxis;
+                    this.chart.cursor.snapToSeries = series;
+                }
+
+                let begin = Math.max(0, this.begin);
+                let end = Math.min(Math.max(0, this.chartData.length - 1), this.end);
+                if (end < begin) end = begin;
+
+                let chartData = [];
+                for (let i = begin; i <= end; i++) {
+                    chartData.push(this.chartData[i]);
+                }
+
+                let phasors = fft(chartData);
 
                 if (phasors.length >= 2) {
                     phasors[0] = phasors[1];
@@ -138,31 +180,11 @@
                 dt = dt.map((currentValue, index) => { return { x: index * (1.0 / FFTSampleRate), y: currentValue } });
 
                 this.chart.data = dt;
-
-                let timeAxis = this.chart.xAxes.push(new am4charts.ValueAxis());
-                timeAxis.extraMax = 0;
-                timeAxis.extraMin = 0;
-                timeAxis.strictMinMax = true;
-                timeAxis.renderer.minGridDistance = 50;
-
-                let valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
-                valueAxis.extraMax = 0;
-                valueAxis.extraMin = 0;
-                valueAxis.strictMinMax = true;
-
-                let series = this.chart.series.push(new am4charts.LineSeries());
-                series.dataFields.valueY = "y";
-                series.dataFields.valueX = "x";
-                series.tooltipText = "{valueY}";
-                series.tooltip.pointerOrientation = "vertical";
-                series.tooltip.background.fillOpacity = 0.5;
-
-                this.chart.scrollbarX = new am4charts.XYChartScrollbar();
-                this.chart.scrollbarX.series.push(series);
-
-                this.chart.cursor = new am4charts.XYCursor();
-                this.chart.cursor.xAxis = timeAxis;
-                this.chart.cursor.snapToSeries = series;
+            }
+        },
+        beforeDestroy() {
+            if (this.chart) {
+                this.chart.dispose();
             }
         }
     }

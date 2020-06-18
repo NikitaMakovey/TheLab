@@ -89,6 +89,11 @@
 
                 this.chart.data = finalData;
             }
+        },
+        beforeDestroy() {
+            if (this.chart) {
+                this.chart.dispose();
+            }
         }
     }
 </script>

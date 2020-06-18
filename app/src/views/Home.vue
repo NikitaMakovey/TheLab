@@ -226,6 +226,14 @@
                     <v-text-field v-model="halfWindowL" label="полуширина окна сглаживания"></v-text-field>
                 </v-card-text>
 
+                <v-card-text>
+                    <v-text-field v-model="beginAnalyzer" label="начало интервала"></v-text-field>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-text-field v-model="endAnalyzer" label="конец интервала"></v-text-field>
+                </v-card-text>
+
                 <v-spacer></v-spacer>
 
                 <template v-if="this.$store.getters.ANALYZE_IDS !== []">
@@ -241,6 +249,8 @@
                                             :zero-mode="IdxZeroModeAnalyzer"
                                             :scaling-mode="IdxTypeAnalyzer"
                                             :smoothing-length="GetHalfWindowL"
+                                            :begin="GetBeginAnalyzer"
+                                            :end="GetEndAnalyzer"
                                     ></AnalyzerComponent>
                                 </v-list-item-action>
                             </v-list-item-content>
@@ -654,7 +664,9 @@
               itemsTypeAnalyzer: ['амплитудный спектр', 'амплитудный спектр (логарифмический режим)', 'СПМ', 'СПМ (логарифмический режим)'],
               zeroModeAnalyzer: 'уровнять с модулем соседнего отсчета',
               typeAnalyzer: 'амплитудный спектр',
-              halfWindowL: "0"
+              halfWindowL: "0",
+              beginAnalyzer: "0",
+              endAnalyzer: "0"
           }
       },
       methods: {
@@ -683,6 +695,8 @@
                       endDate: new Date(0),
                       date: { days: 0, hours: 0, minutes: 0, seconds: 0 }
                   };
+
+                  this.endAnalyzer = Math.max(0, this.infoObject.countSteps - 1);
               }
 
               NAMES.push(this.generationFunctionDialog.name);
@@ -995,6 +1009,7 @@
                   });
 
                   vm.infoObject = infoObject;
+                  vm.endAnalyzer = Math.max(0, vm.infoObject.countSteps - 1);
 
                   store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
                   store.dispatch('UPDATE_CHANNELS', CHANNELS)
@@ -1023,7 +1038,13 @@
               return this.itemsZeroModeAnalyzer.indexOf(this.zeroModeAnalyzer);
           },
           GetHalfWindowL: function() {
-              return Number(this.halfWindowL)
+              return Number(this.halfWindowL);
+          },
+          GetBeginAnalyzer: function() {
+              return Number(this.beginAnalyzer);
+          },
+          GetEndAnalyzer: function() {
+              return Number(this.endAnalyzer);
           },
           Average: function () {
               let channelId = this.$store.getters.STAT_ID;
