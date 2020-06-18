@@ -7,6 +7,9 @@
             <li @click="eventHandleStat(chartId)">
                 <a href="#"><b>статистика</b></a>
             </li>
+            <li @click="eventHandleAnalyze(chartId)">
+                <a href="#"><b>анализ</b></a>
+            </li>
         </vue-context>
         <canvas
             height="100" width="200"
@@ -63,6 +66,22 @@
                 }
 
                 this.$store.dispatch('UPDATE_OSC_DIALOG', true);
+            },
+            eventHandleAnalyze: function (key) {
+                let ids = this.$store.getters.ANALYZE_IDS;
+                let is_pushed = false;
+                for (let i = 0; i !== ids.length; i++) {
+                    if (ids[i] === key) {
+                        is_pushed = true;
+                        break;
+                    }
+                }
+
+                if (!is_pushed) {
+                    this.$store.commit('REFRESH_ANALYZE_IDS', key);
+                }
+
+                this.$store.commit('REFRESH_ANALYZE_DIALOG', true);
             },
             eventHandleStat: function (key) {
                 this.$store.dispatch('UPDATE_STAT_ID', key);

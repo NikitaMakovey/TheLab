@@ -196,6 +196,69 @@
             </v-card>
         </v-dialog>
 
+        <v-dialog :transition="false" v-model="this.$store.getters.ANALYZE_DIALOG"
+                  max-width="600"
+                  hide-overlay
+                  persistent>
+            <v-card>
+                <v-toolbar dark color="pink">
+                    <v-toolbar-title>Анализ</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                </v-toolbar>
+
+                <v-card-text>
+                    <v-select
+                            v-model="typeAnalyzer"
+                            :items="itemsTypeAnalyzer"
+                            label="тип рассчитываемой спектральной характеристики"
+                    ></v-select>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-select
+                            v-model="zeroModeAnalyzer"
+                            :items="itemsZeroModeAnalyzer"
+                            label="режим разрешения коллизии по поводу нулевого отсчета "
+                    ></v-select>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-text-field v-model="halfWindowL" label="полуширина окна сглаживания"></v-text-field>
+                </v-card-text>
+
+                <v-spacer></v-spacer>
+
+                <template v-if="this.$store.getters.ANALYZE_IDS !== []">
+                    <v-list three-line subheader>
+                        <div v-for="(item, index) in this.$store.getters.ANALYZE_IDS" :key="index">
+                            <v-list-item-content class="pa-0 ma-0">
+                                <v-list-item-title class="title text--accent-3 pa-0 ma-0"></v-list-item-title>
+                                <v-list-item-action class="pa-2 ma-0">
+                                    <AnalyzerComponent
+                                            :chart-id="item"
+                                            :chart-data="$store.getters.CHANNELS[item]"
+                                            :sample-rate="infoObject.countGiges"
+                                            :zero-mode="IdxZeroModeAnalyzer"
+                                            :scaling-mode="IdxTypeAnalyzer"
+                                            :smoothing-length="GetHalfWindowL"
+                                    ></AnalyzerComponent>
+                                </v-list-item-action>
+                            </v-list-item-content>
+                        </div>
+                    </v-list>
+                </template>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1"
+                           text
+                           @click="$store.commit('REFRESH_ANALYZE_DIALOG', false)">
+                        ЗАКРЫТЬ
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <!-- ABOUT DIALOG -->
         <v-dialog v-model="aboutDialog" fullscreen
                   hide-overlay transition="dialog-bottom-transition">
@@ -407,12 +470,14 @@
   import OscComponent from "../components/OscComponent";
   import SuperComponent from "../components/SuperComponent";
   import HistogramComponent from "../components/HistogramComponent";
+  import AnalyzerComponent from "../components/AnalyzerComponent";
 
   import modeling from "../modeling/modeling.js";
 
   export default {
       name: "ComputerGraphicsComponent",
       components: {
+          AnalyzerComponent,
           HistogramComponent,
           'channel-component': ChannelComponent,
           'osc-component': OscComponent,
@@ -583,7 +648,13 @@
                       seconds: 0
                   }
               },
-              chart: null
+              chart: null,
+
+              itemsZeroModeAnalyzer: ['ничего не делать', 'уровнять с модулем соседнего отсчета', 'обнулить'],
+              itemsTypeAnalyzer: ['амплитудный спектр', 'амплитудный спектр (логарифмический режим)', 'СПМ', 'СПМ (логарифмический режим)'],
+              zeroModeAnalyzer: 'уровнять с модулем соседнего отсчета',
+              typeAnalyzer: 'амплитудный спектр',
+              halfWindowL: "0"
           }
       },
       methods: {
@@ -599,6 +670,10 @@
                   this.infoObject.countChannels++;
                   this.infoObject.sources.push("Modeling");
               } else {
+                  this.$store.commit('REFRESH_OSC');
+                  this.$store.commit('REFRESH_STAT_DIALOG', false);
+                  this.$store.commit('REFRESH_ANALYZE');
+
                   this.infoObject = {
                       countChannels: 1,
                       sources: ["Modeling"],
@@ -821,8 +896,9 @@
               }
           },
           readFile: function (file) {
-              this.$store.dispatch('CLEAR_OSC');
-              this.$store.dispatch('UPDATE_OSC_DIALOG', false);
+              this.$store.commit('REFRESH_OSC');
+              this.$store.commit('REFRESH_STAT_DIALOG', false);
+              this.$store.commit('REFRESH_ANALYZE');
 
               let NAMES = [];
               let CHANNELS = [];
@@ -940,6 +1016,15 @@
           }
       },
       computed: {
+          IdxTypeAnalyzer: function() {
+              return this.itemsTypeAnalyzer.indexOf(this.typeAnalyzer);
+          },
+          IdxZeroModeAnalyzer: function() {
+              return this.itemsZeroModeAnalyzer.indexOf(this.zeroModeAnalyzer);
+          },
+          GetHalfWindowL: function() {
+              return Number(this.halfWindowL)
+          },
           Average: function () {
               let channelId = this.$store.getters.STAT_ID;
               let channels = this.$store.getters.CHANNELS;

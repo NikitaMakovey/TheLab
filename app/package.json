@@ -12,6 +12,7 @@
     "chart.js": "^2.9.3",
     "chartjs-plugin-streaming": "^1.8.0",
     "core-js": "^3.6.5",
+    "fft-js": "0.0.12",
     "moment": "^2.24.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
