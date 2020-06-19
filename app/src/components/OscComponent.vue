@@ -74,13 +74,9 @@
             let series = this.chart.series.push(new am4charts.LineSeries());
             series.dataFields.valueY = "y";
             series.dataFields.valueX = "x";
-            //series.strokeWidth = 2;
-            //series.minBulletDistance = 0;
             series.tooltipText = "{valueY}";
             series.tooltip.pointerOrientation = "vertical";
-            //series.tooltip.background.cornerRadius = 20;
             series.tooltip.background.fillOpacity = 0.5;
-            //series.tooltip.label.padding(12, 12, 12, 12);
 
             this.chart.scrollbarX = new am4charts.XYChartScrollbar();
             this.chart.scrollbarX.series.push(series);

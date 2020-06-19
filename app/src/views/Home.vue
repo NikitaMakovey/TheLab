@@ -149,6 +149,25 @@
             </v-list>
         </v-menu>
 
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Анализ
+                </span>
+            </template>
+            <v-list class="pa-0" v-for="(item, index) in this.$store.getters.NAMES" :key="index">
+
+                <v-list-item class="pa-0">
+                    <v-list-item-title class="pa-0">
+                        <v-checkbox class="pa-2"
+                                    @change="menuAnalyzeClickHandle(index)"
+                                    :value="item"
+                                    :label="item"></v-checkbox>
+                    </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+
         <v-dialog v-model="this.$store.getters.STAT_DIALOG"
                   max-width="600"
                   hide-overlay
@@ -873,16 +892,48 @@
                   this.menuEventHandle(key, event);
               }
           },
+          menuCloseHandle: function (key) {
+              this.$store.dispatch('DELETE_ITEM_FROM_OSC', key);
+          },
           menuStatClickHandle: function (key) {
               this.$store.dispatch('UPDATE_STAT_DIALOG', true);
               this.$store.dispatch('UPDATE_STAT_ID', key);
           },
-          menuCloseHandle: function (key) {
-              this.$store.dispatch('DELETE_ITEM_FROM_OSC', key).then(() => {
-                  if (this.$store.getters.IDS.length === 0) {
-                      this.$store.dispatch('UPDATE_OSC_DIALOG', false);
+          menuAnalyzeClickHandle: function (key, event) {
+              if (this.menuAnalyzeStatusHandle(key)) {
+                  this.menuAnalyzeCloseHandle(key, event);
+              } else {
+                  this.menuAnalyzeEventHandle(key, event);
+              }
+          },
+          menuAnalyzeStatusHandle: function (key) {
+              const ids = this.$store.getters.ANALYZE_IDS;
+
+              for (let i = 0; i !== ids.length; i++) {
+                  if (ids[i] === key) {
+                      return true;
                   }
-              })
+              }
+
+              return false;
+          },
+          menuAnalyzeEventHandle: function (key) {
+              const ids = this.$store.getters.ANALYZE_IDS;
+              let is_pushed = false;
+              for (let i = 0; i !== ids.length; i++) {
+                  if (ids[i] === key) {
+                      is_pushed = true;
+                      break;
+                  }
+              }
+
+              if (!is_pushed) {
+                  this.$store.commit('REFRESH_ANALYZE_IDS', key);
+                  this.$store.commit('REFRESH_ANALYZE_DIALOG', true);
+              }
+          },
+          menuAnalyzeCloseHandle: function (key) {
+              this.$store.commit('REMOVE_ANALYZE_ID', key);
           },
           menuEventHandle: function (key) {
               const ids = this.$store.getters.IDS;
