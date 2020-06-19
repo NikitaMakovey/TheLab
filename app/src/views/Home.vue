@@ -546,8 +546,8 @@
                       'function': this.functionForGeneration3,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 'n', 'value': 10},
-                          {'key': 'a', 'value': 0}
+                          {'key': 'n', 'value': 100},
+                          {'key': 'a', 'value': 0.5}
                       ]
                   },
                   {
@@ -555,9 +555,9 @@
                       'function': this.functionForGeneration4,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 'n', 'value': 50},
-                          {'key': 'a', 'value': 0},
-                          {'key': '\u03C9 (π)', 'value': 0},
+                          {'key': 'n', 'value': 100},
+                          {'key': 'a', 'value': 1},
+                          {'key': '\u03C9 (π)', 'value': 0.3141592653589793},
                           {'key': '\u03C6 (π)', 'value': 0}
                       ]
                   },
@@ -584,10 +584,10 @@
                       'function': this.functionForGeneration7,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 't', 'value': 0},
-                          {'key': 'a', 'value': 0},
-                          {'key': '\u03C4', 'value': 0},
-                          {'key': 'f', 'value': 0},
+                          {'key': 't', 'value': 100},
+                          {'key': 'a', 'value': 1},
+                          {'key': '\u03C4', 'value': 10},
+                          {'key': 'f', 'value': 0.1},
                           {'key': '\u03C6', 'value': 0}
                       ]
                   },
@@ -596,10 +596,10 @@
                       'function': this.functionForGeneration8,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 't', 'value': 0},
-                          {'key': 'a', 'value': 0},
-                          {'key': 'f0', 'value': 0},
-                          {'key': 'fн', 'value': 0},
+                          {'key': 't', 'value': 100},
+                          {'key': 'a', 'value': 1},
+                          {'key': 'f0', 'value': 0.01},
+                          {'key': 'fн', 'value': 0.1},
                           {'key': '\u03C6', 'value': 0}
                       ]
                   },
@@ -608,11 +608,11 @@
                       'function': this.functionForGeneration9,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 't', 'value': 0},
-                          {'key': 'a', 'value': 0},
-                          {'key': 'm', 'value': 0},
-                          {'key': 'f0', 'value': 0},
-                          {'key': 'fн', 'value': 0},
+                          {'key': 't', 'value': 100},
+                          {'key': 'a', 'value': 1},
+                          {'key': 'm', 'value': 1},
+                          {'key': 'f0', 'value': 0.01},
+                          {'key': 'fн', 'value': 0.1},
                           {'key': '\u03C6', 'value': 0}
                       ]
                   },
@@ -621,9 +621,9 @@
                       'function': this.functionForGeneration10,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 'n', 'value': 0},
-                          {'key': 'a', 'value': 0},
-                          {'key': 'b', 'value': 0}
+                          {'key': 'n', 'value': 100},
+                          {'key': 'a', 'value': -5},
+                          {'key': 'b', 'value': 5}
                       ]
                   },
                   {
@@ -631,9 +631,9 @@
                       'function': this.functionForGeneration11,
                       'params': [
                           {'key': 'Sample Rate', 'value': 1},
-                          {'key': 'n', 'value': 0},
+                          {'key': 'n', 'value': 100},
                           {'key': 'a', 'value': 0},
-                          {'key': '\u03C3^2', 'value': 0}
+                          {'key': '\u03C3^2', 'value': 1}
                       ]
                   },
                   {

@@ -146,9 +146,11 @@
 
                 let phasors = fft(chartData);
 
-                if (phasors.length >= 2) {
-                    phasors[0] = phasors[1];
-                }
+                // console.log(phasors);
+                //
+                // if (phasors.length >= 2) {
+                //     phasors[0] = phasors[1];
+                // }
 
                 let magnitudes = fftUtil.fftMag(phasors);
 
