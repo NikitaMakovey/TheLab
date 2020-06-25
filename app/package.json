@@ -13,6 +13,8 @@
     "chartjs-plugin-streaming": "^1.8.0",
     "core-js": "^3.6.5",
     "fft-js": "0.0.12",
+    "fourier-transform": "^1.1.2",
+    "jimp": "^0.13.0",
     "moment": "^2.24.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",

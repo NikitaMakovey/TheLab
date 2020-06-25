@@ -10,9 +10,12 @@
             <li @click="eventHandleAnalyze(chartId)">
                 <a href="#"><b>анализ</b></a>
             </li>
+            <li @click="eventHandleSpectrogram(chartId)">
+                <a href="#"><b>спектрограмма</b></a>
+            </li>
         </vue-context>
         <canvas
-            height="100" width="200"
+            height="100" :width="width1"
             style="border: 1px solid black; padding: 1px;"
             ref="canvas"
         ></canvas>
@@ -27,7 +30,7 @@
     export default {
         data() {
             return {
-                //
+                width1: 200
             }
         },
         components: {
@@ -87,15 +90,59 @@
                 this.$store.dispatch('UPDATE_STAT_ID', key);
                 this.$store.dispatch('UPDATE_STAT_DIALOG', true);
             },
+            eventHandleSpectrogram: function (key) {
+                this.$store.commit('REFRESH_SPECTROGRAM_ID', key);
+                this.$store.commit('REFRESH_SPECTROGRAM_DIALOG', true);
+            },
             myRenderChart: function () {
+                let data = []
+
+                const cnt = Math.ceil(this.chartData.length / this.width1);
+
+                if (cnt > 1) {
+                    let iterations = Math.floor((this.chartData.length + cnt - 1) / cnt);
+
+                    let prevMaxValue = 0.0;
+
+                    for (let i = 0; i < iterations; i++) {
+                        let maxValue = Number.MIN_SAFE_INTEGER
+                        let minValue = Number.MAX_SAFE_INTEGER
+                        for (let j = i * cnt; j < (i + 1) * cnt; j++) {
+                            if (j >= this.chartData.length) break;
+
+                            maxValue = Math.max(maxValue, this.chartData[j]);
+                            minValue = Math.min(minValue, this.chartData[j]);
+                        }
+
+                        if (i !== 0 && Math.abs(prevMaxValue - maxValue) < Math.abs(prevMaxValue - minValue)) {
+                            let t = maxValue;
+                            maxValue = minValue;
+                            minValue = t;
+                        }
+
+                        prevMaxValue = maxValue;
+
+                        data.push(minValue)
+                        data.push(maxValue)
+                    }
+                } else {
+                    data = this.chartData;
+                }
+
+                if (this.chartName === "BHE") {
+                    console.log(cnt)
+                    console.log(this.chartData)
+                    console.log(data)
+                }
+
                 this.renderChart({
-                            labels: this.chartData,
+                            labels: data,
                             datasets: [
                                 {
                                     pointRadius: 0,
                                     label: this.chartName,
                                     backgroundColor: 'white',
-                                    data: this.chartData,
+                                    data: data,
                                     pointStyle: 'line',
                                     borderWidth: 1,
                                     borderColor: 'black'

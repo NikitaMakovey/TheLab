@@ -215,6 +215,51 @@
             </v-card>
         </v-dialog>
 
+        <v-dialog v-model="this.$store.getters.SPECTROGRAM_DIALOG"
+                  max-width="600"
+                  hide-overlay
+                  persistent>
+            <v-card>
+                <v-toolbar dark color="pink">
+                    <v-toolbar-title>Спектрограмма</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                </v-toolbar>
+
+                <v-card-text>
+                    <v-text-field v-model="brightnessSpectrogram" label="яркость"></v-text-field>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-text-field v-model="coefSpectrogram" label="захлёст"></v-text-field>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-text-field v-model="beginSpectrogram" label="начало интервала"></v-text-field>
+                </v-card-text>
+
+                <v-card-text>
+                    <v-text-field v-model="endSpectrogram" label="конец интервала"></v-text-field>
+                </v-card-text>
+
+                <SpectrogramComponent
+                        :chart-data="this.$store.getters.CHANNELS[this.$store.getters.SPECTROGRAM_ID]"
+                        :sample-rate="this.infoObject.countGiges"
+                        :begin="GetBeginSpectrogram"
+                        :end="GetEndSpectrogram"
+                        :coef="GetCoefSpectrogram"
+                        :brightness="GetBrightnessSpectrogram"></SpectrogramComponent>
+
+                <v-card-actions class="pa-4 ma-0">
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1"
+                           text
+                           @click="$store.commit('REFRESH_SPECTROGRAM_DIALOG', false)">
+                        ЗАКРЫТЬ
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-dialog :transition="false" v-model="this.$store.getters.ANALYZE_DIALOG"
                   max-width="600"
                   hide-overlay
@@ -472,7 +517,7 @@
         </v-col>
         <v-col cols="2">
           <template v-if="this.$store.getters.CHANNELS !== null && this.$store.getters.CHANNELS.length !== 0">
-            <div style="width: 201px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
+            <div style="width: 205px; border: 1px solid black; border-radius: 5px;" class="ma-0 pa-0">
               <v-subheader class="ma-0 pa-2 title ">Каналы</v-subheader>
               <v-row
                       v-for="(data, index) in this.$store.getters.CHANNELS"
@@ -500,12 +545,14 @@
   import SuperComponent from "../components/SuperComponent";
   import HistogramComponent from "../components/HistogramComponent";
   import AnalyzerComponent from "../components/AnalyzerComponent";
+  import SpectrogramComponent from "../components/SpectrogramComponent";
 
   import modeling from "../modeling/modeling.js";
 
   export default {
       name: "ComputerGraphicsComponent",
       components: {
+          SpectrogramComponent,
           AnalyzerComponent,
           HistogramComponent,
           'channel-component': ChannelComponent,
@@ -685,7 +732,12 @@
               typeAnalyzer: 'амплитудный спектр',
               halfWindowL: "0",
               beginAnalyzer: "0",
-              endAnalyzer: "0"
+              endAnalyzer: "0",
+
+              brightnessSpectrogram: "1",
+              coefSpectrogram: "1",
+              beginSpectrogram: "0",
+              endSpectrogram: "0"
           }
       },
       methods: {
@@ -716,6 +768,7 @@
                   };
 
                   this.endAnalyzer = Math.max(0, this.infoObject.countSteps - 1);
+                  this.endSpectrogram = Math.max(0, this.infoObject.countSteps - 1);
               }
 
               NAMES.push(this.generationFunctionDialog.name);
@@ -1061,6 +1114,7 @@
 
                   vm.infoObject = infoObject;
                   vm.endAnalyzer = Math.max(0, vm.infoObject.countSteps - 1);
+                  vm.endSpectrogram = Math.max(0, vm.infoObject.countSteps - 1);
 
                   store.dispatch('UPDATE_CHANNEL_NAMES', NAMES);
                   store.dispatch('UPDATE_CHANNELS', CHANNELS)
@@ -1096,6 +1150,18 @@
           },
           GetEndAnalyzer: function() {
               return Number(this.endAnalyzer);
+          },
+          GetBrightnessSpectrogram: function () {
+              return Number(this.brightnessSpectrogram)
+          },
+          GetCoefSpectrogram: function () {
+              return Number(this.coefSpectrogram)
+          },
+          GetBeginSpectrogram: function () {
+              return Number(this.beginSpectrogram)
+          },
+          GetEndSpectrogram: function () {
+              return Number(this.endSpectrogram)
           },
           Average: function () {
               let channelId = this.$store.getters.STAT_ID;

@@ -7,7 +7,10 @@ export default {
         STAT_DIALOG: false,
 
         ANALYZE_IDS: [],
-        ANALYZE_DIALOG: false
+        ANALYZE_DIALOG: false,
+
+        SPECTROGRAM_ID: 0,
+        SPECTROGRAM_DIALOG: false
     },
     getters: {
         IDS: state => { return state.IDS },
@@ -17,7 +20,10 @@ export default {
         STAT_DIALOG: state => { return state.STAT_DIALOG },
 
         ANALYZE_IDS: state => { return state.ANALYZE_IDS },
-        ANALYZE_DIALOG: state => { return state.ANALYZE_DIALOG }
+        ANALYZE_DIALOG: state => { return state.ANALYZE_DIALOG },
+
+        SPECTROGRAM_ID: state => { return state.SPECTROGRAM_ID },
+        SPECTROGRAM_DIALOG: state => { return state.SPECTROGRAM_DIALOG },
     },
     mutations: {
         REFRESH_OSC: (state) => {
@@ -59,6 +65,13 @@ export default {
             if (state.ANALYZE_IDS.length === 0) {
                 state.ANALYZE_DIALOG = false;
             }
+        },
+
+        REFRESH_SPECTROGRAM_ID: (state, payload) => {
+            state.SPECTROGRAM_ID = payload;
+        },
+        REFRESH_SPECTROGRAM_DIALOG: (state, payload) => {
+            state.SPECTROGRAM_DIALOG = payload
         }
     },
     actions: {
