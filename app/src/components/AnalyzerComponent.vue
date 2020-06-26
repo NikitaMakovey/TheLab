@@ -41,13 +41,18 @@
         // 1 - x(0) = |x(1)|
         // 2 - x(0) = 0
 
-        props: ["chartId", "chartData", "sampleRate", "scalingMode", "zeroMode", "smoothingLength", "begin", "end"],
+        props: ["chartId", "chartData", "sampleRate", "scalingMode", "zeroMode", "smoothingLength"],
         data() {
             return {
-                chart: null
+                chart: null,
+                begin: 0,
+                end: 0
             }
         },
         mounted() {
+            this.begin = Math.floor(this.$store.getters.GLOBAL_RANGE.start * (this.chartData.length - 1));
+            this.end = Math.floor(this.$store.getters.GLOBAL_RANGE.end * (this.chartData.length - 1));
+
             this.updateData();
         },
         watch: {
@@ -69,11 +74,15 @@
             smoothingLength: function () {
                 this.updateData();
             },
-            begin: function () {
-                this.updateData();
-            },
-            end: function () {
-                this.updateData();
+            globalRange: function (newVal) {
+                this.begin = Math.floor(newVal.start * (this.chartData.length - 1));
+                this.end = Math.floor(newVal.end * (this.chartData.length - 1));
+                this.updateData()
+            }
+        },
+        computed: {
+            globalRange: function () {
+                return this.$store.getters.GLOBAL_RANGE;
             }
         },
         methods: {

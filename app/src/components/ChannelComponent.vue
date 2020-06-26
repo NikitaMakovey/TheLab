@@ -27,6 +27,8 @@
     import { VueContext } from 'vue-context'
     import 'vue-context/src/sass/vue-context.scss';
 
+    import optimize from '../helpfun/optimization.js'
+
     export default {
         data() {
             return {
@@ -95,45 +97,7 @@
                 this.$store.commit('REFRESH_SPECTROGRAM_DIALOG', true);
             },
             myRenderChart: function () {
-                let data = []
-
-                const cnt = Math.ceil(this.chartData.length / this.width1);
-
-                if (cnt > 1) {
-                    let iterations = Math.floor((this.chartData.length + cnt - 1) / cnt);
-
-                    let prevMaxValue = 0.0;
-
-                    for (let i = 0; i < iterations; i++) {
-                        let maxValue = Number.MIN_SAFE_INTEGER
-                        let minValue = Number.MAX_SAFE_INTEGER
-                        for (let j = i * cnt; j < (i + 1) * cnt; j++) {
-                            if (j >= this.chartData.length) break;
-
-                            maxValue = Math.max(maxValue, this.chartData[j]);
-                            minValue = Math.min(minValue, this.chartData[j]);
-                        }
-
-                        if (i !== 0 && Math.abs(prevMaxValue - maxValue) < Math.abs(prevMaxValue - minValue)) {
-                            let t = maxValue;
-                            maxValue = minValue;
-                            minValue = t;
-                        }
-
-                        prevMaxValue = maxValue;
-
-                        data.push(minValue)
-                        data.push(maxValue)
-                    }
-                } else {
-                    data = this.chartData;
-                }
-
-                if (this.chartName === "BHE") {
-                    console.log(cnt)
-                    console.log(this.chartData)
-                    console.log(data)
-                }
+                let data = optimize.optimizeData(this.chartData, this.width1);
 
                 this.renderChart({
                             labels: data,
