@@ -10,7 +10,9 @@ export default {
         ANALYZE_DIALOG: false,
 
         SPECTROGRAM_ID: 0,
-        SPECTROGRAM_DIALOG: false
+        SPECTROGRAM_DIALOG: false,
+
+        GLOBAL_RANGE: {start: 0, end: 1, priority: "start"}
     },
     getters: {
         IDS: state => { return state.IDS },
@@ -24,6 +26,8 @@ export default {
 
         SPECTROGRAM_ID: state => { return state.SPECTROGRAM_ID },
         SPECTROGRAM_DIALOG: state => { return state.SPECTROGRAM_DIALOG },
+
+        GLOBAL_RANGE: state => { return state.GLOBAL_RANGE }
     },
     mutations: {
         REFRESH_OSC: (state) => {
@@ -47,7 +51,7 @@ export default {
             state.STAT_ID = payload;
         },
         REFRESH_STAT_DIALOG: (state, payload) => {
-            state.STAT_DIALOG = payload
+            state.STAT_DIALOG = payload;
         },
 
         REFRESH_ANALYZE: (state) => {
@@ -71,7 +75,11 @@ export default {
             state.SPECTROGRAM_ID = payload;
         },
         REFRESH_SPECTROGRAM_DIALOG: (state, payload) => {
-            state.SPECTROGRAM_DIALOG = payload
+            state.SPECTROGRAM_DIALOG = payload;
+        },
+
+        REFRESH_GLOBAL_RANGE: (state, payload) => {
+            state.GLOBAL_RANGE = payload;
         }
     },
     actions: {

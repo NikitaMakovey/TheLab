@@ -168,6 +168,25 @@
             </v-list>
         </v-menu>
 
+        <v-menu bottom offset-y>
+            <template v-slot:activator="{ on }">
+                <span v-on="on">
+                    Спектрограмма
+                </span>
+            </template>
+            <v-list class="pa-0" v-for="(item, index) in this.$store.getters.NAMES" :key="index">
+
+                <v-list-item class="pa-0">
+                    <v-list-item-title class="pa-0">
+                        <v-checkbox class="pa-2"
+                                    @change="menuSpectrogrammClickHandle(index)"
+                                    :value="item"
+                                    :label="item"></v-checkbox>
+                    </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+
         <v-dialog v-model="this.$store.getters.STAT_DIALOG"
                   max-width="600"
                   hide-overlay
@@ -216,7 +235,7 @@
         </v-dialog>
 
         <v-dialog v-model="this.$store.getters.SPECTROGRAM_DIALOG"
-                  max-width="600"
+                  width="unset"
                   hide-overlay
                   persistent>
             <v-card>
@@ -230,24 +249,25 @@
                 </v-card-text>
 
                 <v-card-text>
-                    <v-text-field v-model="coefSpectrogram" label="захлёст"></v-text-field>
+                    <v-text-field v-model="coefSpectrogram" label="нахлест"></v-text-field>
                 </v-card-text>
 
                 <v-card-text>
-                    <v-text-field v-model="beginSpectrogram" label="начало интервала"></v-text-field>
+                    <v-text-field v-model="widthSpectrogram" label="количество пикселей по ширине"></v-text-field>
                 </v-card-text>
 
                 <v-card-text>
-                    <v-text-field v-model="endSpectrogram" label="конец интервала"></v-text-field>
+                    <v-text-field v-model="heightSpectrogram" label="количество пикселей по высоте"></v-text-field>
                 </v-card-text>
 
                 <SpectrogramComponent
                         :chart-data="this.$store.getters.CHANNELS[this.$store.getters.SPECTROGRAM_ID]"
                         :sample-rate="this.infoObject.countGiges"
-                        :begin="GetBeginSpectrogram"
-                        :end="GetEndSpectrogram"
                         :coef="GetCoefSpectrogram"
-                        :brightness="GetBrightnessSpectrogram"></SpectrogramComponent>
+                        :brightness="GetBrightnessSpectrogram"
+                        :width="GetWidthSpectrogram"
+                        :height="GetHeightSpectrogram">
+                </SpectrogramComponent>
 
                 <v-card-actions class="pa-4 ma-0">
                     <v-spacer></v-spacer>
@@ -290,14 +310,6 @@
                     <v-text-field v-model="halfWindowL" label="полуширина окна сглаживания"></v-text-field>
                 </v-card-text>
 
-                <v-card-text>
-                    <v-text-field v-model="beginAnalyzer" label="начало интервала"></v-text-field>
-                </v-card-text>
-
-                <v-card-text>
-                    <v-text-field v-model="endAnalyzer" label="конец интервала"></v-text-field>
-                </v-card-text>
-
                 <v-spacer></v-spacer>
 
                 <template v-if="this.$store.getters.ANALYZE_IDS !== []">
@@ -313,8 +325,6 @@
                                             :zero-mode="IdxZeroModeAnalyzer"
                                             :scaling-mode="IdxTypeAnalyzer"
                                             :smoothing-length="GetHalfWindowL"
-                                            :begin="GetBeginAnalyzer"
-                                            :end="GetEndAnalyzer"
                                     ></AnalyzerComponent>
                                 </v-list-item-action>
                             </v-list-item-content>
@@ -731,14 +741,51 @@
               zeroModeAnalyzer: 'уровнять с модулем соседнего отсчета',
               typeAnalyzer: 'амплитудный спектр',
               halfWindowL: "0",
-              beginAnalyzer: "0",
-              endAnalyzer: "0",
 
               brightnessSpectrogram: "1",
               coefSpectrogram: "1",
-              beginSpectrogram: "0",
-              endSpectrogram: "0"
+              widthSpectrogram: "512",
+              heightSpectrogram: "256"
           }
+      },
+      mounted() {
+          const d = {};
+          document.addEventListener("mousedown", e => {
+              const closestDialog = e.target.closest(".v-dialog.v-dialog--active");
+              if (e.button === 0 && closestDialog != null && e.target.classList.contains("v-toolbar__content")) { // element which can be used to move element
+                  d.el = closestDialog; // element which should be moved
+                  d.mouseStartX = e.clientX;
+                  d.mouseStartY = e.clientY;
+                  d.elStartX = d.el.getBoundingClientRect().left;
+                  d.elStartY = d.el.getBoundingClientRect().top;
+                  d.el.style.position = "fixed";
+                  d.el.style.margin = 0;
+                  d.oldTransition = d.el.style.transition;
+                  d.el.style.transition = "none"
+              }
+          });
+          document.addEventListener("mousemove", e => {
+              if (d.el === undefined) return;
+              d.el.style.left = Math.min(
+                  Math.max(d.elStartX + e.clientX - d.mouseStartX, 0),
+                  window.innerWidth - d.el.getBoundingClientRect().width
+              ) + "px";
+              d.el.style.top = Math.min(
+                  Math.max(d.elStartY + e.clientY - d.mouseStartY, 0),
+                  window.innerHeight - d.el.getBoundingClientRect().height
+              ) + "px";
+          });
+          document.addEventListener("mouseup", () => {
+              if (d.el === undefined) return;
+              d.el.style.transition = d.oldTransition;
+              d.el = undefined
+          });
+          setInterval(() => { // prevent out of bounds
+              const dialog = document.querySelector(".v-dialog.v-dialog--active");
+              if (dialog === null) return;
+              dialog.style.left = Math.min(parseInt(dialog.style.left), window.innerWidth - dialog.getBoundingClientRect().width) + "px";
+              dialog.style.top = Math.min(parseInt(dialog.style.top), window.innerHeight - dialog.getBoundingClientRect().height) + "px";
+          }, 100);
       },
       methods: {
           functionForReplacing: function (channelArray, sampleRate) {
@@ -959,6 +1006,10 @@
                   this.menuAnalyzeEventHandle(key, event);
               }
           },
+          menuSpectrogrammClickHandle: function (key) {
+              this.$store.commit('REFRESH_SPECTROGRAM_DIALOG', true);
+              this.$store.commit('REFRESH_SPECTROGRAM_ID', key);
+          },
           menuAnalyzeStatusHandle: function (key) {
               const ids = this.$store.getters.ANALYZE_IDS;
 
@@ -1145,23 +1196,17 @@
           GetHalfWindowL: function() {
               return Number(this.halfWindowL);
           },
-          GetBeginAnalyzer: function() {
-              return Number(this.beginAnalyzer);
-          },
-          GetEndAnalyzer: function() {
-              return Number(this.endAnalyzer);
-          },
           GetBrightnessSpectrogram: function () {
               return Number(this.brightnessSpectrogram)
           },
           GetCoefSpectrogram: function () {
               return Number(this.coefSpectrogram)
           },
-          GetBeginSpectrogram: function () {
-              return Number(this.beginSpectrogram)
+          GetWidthSpectrogram: function () {
+              return Number(this.widthSpectrogram)
           },
-          GetEndSpectrogram: function () {
-              return Number(this.endSpectrogram)
+          GetHeightSpectrogram: function () {
+              return Number(this.heightSpectrogram)
           },
           Average: function () {
               let channelId = this.$store.getters.STAT_ID;

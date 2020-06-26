@@ -1,5 +1,5 @@
 <template>
-    <img v-bind:src="imgSpectrogramSrc">
+    <img v-bind:src="imgSpectrogramSrc" style="margin-left: 16px; margin-right: 16px; max-width: 1024px; max-height: 512px">
 </template>
 
 <script>
@@ -8,13 +8,18 @@ const ft = require('fourier-transform/asm');
 
 export default {
     name: "SpectrogramComponent",
-    props: ["chartData", "sampleRate", "begin", "end", "coef", "brightness"],
+    props: ["chartData", "sampleRate", "coef", "brightness", "width", "height"],
     data: function () {
         return {
-            imgSpectrogramSrc: ""
+            imgSpectrogramSrc: "",
+            begin: 0,
+            end: 0
         }
     },
     mounted() {
+        this.begin = Math.floor(this.$store.getters.GLOBAL_RANGE.start * (this.chartData.length - 1));
+        this.end = Math.floor(this.$store.getters.GLOBAL_RANGE.end * (this.chartData.length - 1));
+
         this.recalcMtx()
     },
     watch: {
@@ -24,23 +29,33 @@ export default {
         sampleRate: function () {
             this.recalcMtx()
         },
-        begin: function () {
-            this.recalcMtx()
-        },
-        end: function () {
-            this.recalcMtx()
-        },
         coef: function () {
             this.recalcMtx()
         },
         brightness: function () {
             this.recalcMtx()
+        },
+        globalRange: function (newVal) {
+            this.begin = Math.floor(newVal.start * (this.chartData.length - 1));
+            this.end = Math.floor(newVal.end * (this.chartData.length - 1));
+            this.recalcMtx()
+        },
+        width: function () {
+            this.recalcMtx()
+        },
+        height: function () {
+            this.recalcMtx()
+        }
+    },
+    computed: {
+        globalRange: function () {
+            return this.$store.getters.GLOBAL_RANGE;
         }
     },
     methods: {
         recalcMtx: function () {
-            const width = 512;
-            const height = 256;
+            const width = this.width;
+            const height = this.height;
             const coeffN = Math.min(10.0, Math.max(1.0, this.coef));
 
             let left = Math.max(0, this.begin);
@@ -48,6 +63,8 @@ export default {
             if (right < left) right = left;
 
             const len = right - left + 1;
+
+            console.log(len)
 
             // step 1
             const sectionsCount = width;
@@ -157,12 +174,17 @@ export default {
                 }
             }
 
-            new Jimp(width, height, (err, image) => {
+            new Jimp(width, height, 0x000000ff, (err, image) => {
                 for (let x = 0; x < width; x++) {
                     for (let y = 0; y < height; y++) {
-                        const grayScale = Math.min(255, Math.floor(255 * spectrogramMatrix[y][x] * this.brightness / maxVal));
 
-                        image.setPixelColor(Jimp.rgbaToInt(grayScale, grayScale, grayScale, 255), x, height - 1 - y);
+                        const greyScale = Math.min(255, Math.floor(255 * spectrogramMatrix[y][x] * this.brightness / maxVal));
+
+                        if (isNaN(greyScale)) {
+                            continue
+                        }
+
+                        image.setPixelColor(Jimp.rgbaToInt(greyScale, greyScale, greyScale, 255), x, height - 1 - y);
                     }
                 }
 

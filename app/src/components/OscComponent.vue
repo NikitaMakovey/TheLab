@@ -13,17 +13,20 @@
 </template>
 
 <script>
-    import { VueContext } from 'vue-context'
+    import {VueContext} from 'vue-context'
     import 'vue-context/src/sass/vue-context.scss';
     import * as am4core from "@amcharts/amcharts4/core";
     import * as am4charts from "@amcharts/amcharts4/charts";
     import am4themes_dataviz from "@amcharts/amcharts4/themes/dataviz";
 
+    import optimize from '../helpfun/optimization.js'
+
     export default {
         data() {
             return {
                 index: 0,
-                chart: null
+                chart: null,
+                valueAxis: null
             }
         },
         components: {
@@ -52,6 +55,14 @@
             },
             firstDate: function () {
                 this.myRenderChart();
+            },
+            globalRange: function (newVal) {
+                this.valueAxis.zoom(newVal, true);
+            }
+        },
+        computed: {
+            globalRange: function () {
+                return this.$store.getters.GLOBAL_RANGE;
             }
         },
         mounted() {
@@ -59,17 +70,19 @@
 
             this.chart = am4core.create(this.$refs.chartDiv, am4charts.XYChart);
 
-            this.myRenderChart();
+            let len = this.myRenderChart();
 
             let timeAxis = this.chart.xAxes.push(new am4charts.ValueAxis());
             timeAxis.extraMax = 0;
             timeAxis.extraMin = 0;
             timeAxis.strictMinMax = true;
             timeAxis.min = 0;
-            timeAxis.max = Math.floor((this.timeValue / 1000) * (this.countSteps - 1));
+            timeAxis.max = (this.timeValue / 1000) * (len - 1);
             timeAxis.renderer.minGridDistance = 50;
 
             let valueAxis = this.chart.yAxes.push(new am4charts.ValueAxis());
+
+            this.valueAxis = timeAxis
 
             let series = this.chart.series.push(new am4charts.LineSeries());
             series.dataFields.valueY = "y";
@@ -79,6 +92,10 @@
             series.tooltip.background.fillOpacity = 0.5;
 
             this.chart.scrollbarX = new am4charts.XYChartScrollbar();
+            timeAxis.events.on("datarangechanged", () => {
+                const range = {start: timeAxis.start, end: timeAxis.end, priority: "start"};
+                this.$store.commit("REFRESH_GLOBAL_RANGE", range);
+            })
             this.chart.scrollbarX.series.push(series);
 
             this.chart.cursor = new am4charts.XYCursor();
@@ -94,17 +111,22 @@
                 return this.gcd(b, a % b);
             },
             myRenderChart: function () {
-                this.chart.data = this.generateChartData(this.chartData);
+                let w = this.$refs.chartDiv.clientWidth
+                if (w === 0) {
+                    w = 500
+                }
+                let data = optimize.optimizeData(this.chartData, w)
+                this.chart.data = this.generateChartData(data);
+                return data.length
             },
             generateChartData: function (data) {
                 let chartData = [];
-                for (let i = 0; i < this.countSteps; i++) {
+                for (let i = 0; i < data.length; i++) {
                     chartData.push({
                         x: (this.timeValue / 1000) * i,
                         y: data[i]
                     });
                 }
-
                 return chartData;
             },
             closeHandle: function (key) {
