@@ -5,11 +5,17 @@
                 <a href="#"><b>осциллограмма</b></a>
             </li>
             <li @click="eventHandleStat(chartId)">
-                <a href="#"><b>какашка</b></a>
+                <a href="#"><b>статистика</b></a>
+            </li>
+            <li @click="eventHandleAnalyze(chartId)">
+                <a href="#"><b>анализ</b></a>
+            </li>
+            <li @click="eventHandleSpectrogram(chartId)">
+                <a href="#"><b>спектрограмма</b></a>
             </li>
         </vue-context>
         <canvas
-            height="100" width="200"
+            height="100" :width="width1"
             style="border: 1px solid black; padding: 1px;"
             ref="canvas"
         ></canvas>
@@ -21,10 +27,12 @@
     import { VueContext } from 'vue-context'
     import 'vue-context/src/sass/vue-context.scss';
 
+    import optimize from '../helpfun/optimization.js'
+
     export default {
         data() {
             return {
-                //
+                width1: 200
             }
         },
         components: {
@@ -33,57 +41,104 @@
         extends: Line,
         props: ['chartData', 'chartName', 'chartId'],
         mixins: [mixins.reactiveProp],
-        mounted () {
-            this.renderChart({
-                    labels: this.chartData,
-                    datasets: [
-                        {
-                            pointRadius: 0,
-                            label: this.chartName,
-                            backgroundColor: 'white',
-                            data: this.chartData,
-                            pointStyle: 'line',
-                            borderWidth: 1,
-                            borderColor: 'black'
-                        }
-                    ]
+        mounted() {
+            this.myRenderChart();
+        },
+        watch: {
+            chartData: function () {
+                this.myRenderChart();
             },
-            {
-                scales:{
-                    xAxes: [{
-                        display: false
-                    }],
-                    yAxes: [{
-                        display: false
-                    }]
-                },
-                responsive: true
-            });
+            chartName: function () {
+                this.myRenderChart();
+            },
+            chartId: function () {
+                this.myRenderChart();
+            }
         },
         methods: {
-            eventHandle: function (key, event) {
-                console.log(key);
+            eventHandle: function (key) {
                 let ids = this.$store.getters.IDS;
                 let is_pushed = false;
                 for (let i = 0; i !== ids.length; i++) {
-                    if (ids[i] === key) is_pushed = true;
+                    if (ids[i] === key) {
+                        is_pushed = true;
+                        break;
+                    }
                 }
 
                 if (!is_pushed) {
                     this.$store.dispatch('UPDATE_IDS', key);
-                    this.$store.dispatch('UPDATE_OSC_CHANNELS', this.$store.getters.CHANNELS[key]);
                 }
 
                 this.$store.dispatch('UPDATE_OSC_DIALOG', true);
             },
-            eventHandleStat: function (key, event) {
+            eventHandleAnalyze: function (key) {
+                let ids = this.$store.getters.ANALYZE_IDS;
+                let is_pushed = false;
+                for (let i = 0; i !== ids.length; i++) {
+                    if (ids[i] === key) {
+                        is_pushed = true;
+                        break;
+                    }
+                }
+
+                if (!is_pushed) {
+                    this.$store.commit('REFRESH_ANALYZE_IDS', key);
+                }
+
+                this.$store.commit('REFRESH_ANALYZE_DIALOG', true);
+            },
+            eventHandleStat: function (key) {
                 this.$store.dispatch('UPDATE_STAT_ID', key);
                 this.$store.dispatch('UPDATE_STAT_DIALOG', true);
+            },
+            eventHandleSpectrogram: function (key) {
+                this.$store.commit('REFRESH_SPECTROGRAM_ID', key);
+                this.$store.commit('REFRESH_SPECTROGRAM_DIALOG', true);
+            },
+            myRenderChart: function () {
+                let data = optimize.optimizeData(this.chartData, this.width1);
+
+                this.renderChart({
+                            labels: data,
+                            datasets: [
+                                {
+                                    pointRadius: 0,
+                                    label: this.chartName,
+                                    backgroundColor: 'white',
+                                    data: data,
+                                    pointStyle: 'line',
+                                    borderWidth: 1,
+                                    borderColor: 'black'
+                                }
+                            ]
+                        },
+                        {
+                            scales: {
+                                xAxes: [{
+                                    display: false
+                                }],
+                                yAxes: [{
+                                    display: false
+                                }]
+                            },
+                            animation: {
+                                duration: 0 // general animation time
+                            },
+                            hover: {
+                                animationDuration: 0 // duration of animations when hovering an item
+                            },
+                            elements: {
+                                line: {
+                                    tension: 0 // disables bezier curves
+                                }
+                            },
+                            responsiveAnimationDuration: 0, // animation duration after a resize
+                            responsive: true
+                        });
             }
         }
-        
     }
-
 </script>
 
 <style scoped>

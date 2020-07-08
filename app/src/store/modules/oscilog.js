@@ -1,25 +1,38 @@
 export default {
     state: {
-        OSC_CHANNELS: [],
         IDS: [],
         OSC_DIALOG: false,
+
         STAT_ID: 0,
-        STAT_DIALOG: false
+        STAT_DIALOG: false,
+
+        ANALYZE_IDS: [],
+        ANALYZE_DIALOG: false,
+
+        SPECTROGRAM_ID: 0,
+        SPECTROGRAM_DIALOG: false,
+
+        GLOBAL_RANGE: {start: 0, end: 1, priority: "start"}
     },
     getters: {
-        OSC_CHANNELS: state => { return state.OSC_CHANNELS },
         IDS: state => { return state.IDS },
         OSC_DIALOG: state => { return state.OSC_DIALOG },
+
         STAT_ID: state => { return state.STAT_ID },
-        STAT_DIALOG: state => { return state.STAT_DIALOG }
+        STAT_DIALOG: state => { return state.STAT_DIALOG },
+
+        ANALYZE_IDS: state => { return state.ANALYZE_IDS },
+        ANALYZE_DIALOG: state => { return state.ANALYZE_DIALOG },
+
+        SPECTROGRAM_ID: state => { return state.SPECTROGRAM_ID },
+        SPECTROGRAM_DIALOG: state => { return state.SPECTROGRAM_DIALOG },
+
+        GLOBAL_RANGE: state => { return state.GLOBAL_RANGE }
     },
     mutations: {
         REFRESH_OSC: (state) => {
-            state.OSC_CHANNELS = [];
             state.IDS = [];
-        },
-        REFRESH_OSC_CHANNELS: (state, payload) => {
-            state.OSC_CHANNELS.push(payload);
+            state.OSC_DIALOG = false;
         },
         REFRESH_IDS: (state, payload) => {
             state.IDS.push(payload);
@@ -28,23 +41,48 @@ export default {
             state.OSC_DIALOG = payload
         },
         REMOVE_ITEM: (state, payload) => {
-            state.OSC_CHANNELS.splice(payload, 1);
-            state.IDS.splice(payload, 1);
+            state.IDS.splice(state.IDS.findIndex(x => x === payload), 1);
+            if (state.IDS.length === 0) {
+                state.OSC_DIALOG = false;
+            }
         },
+
         REFRESH_STAT_ID: (state, payload) => {
             state.STAT_ID = payload;
         },
         REFRESH_STAT_DIALOG: (state, payload) => {
-            state.STAT_DIALOG = payload
+            state.STAT_DIALOG = payload;
+        },
+
+        REFRESH_ANALYZE: (state) => {
+            state.ANALYZE_IDS = [];
+            state.ANALYZE_DIALOG = false;
+        },
+        REFRESH_ANALYZE_IDS: (state, payload) => {
+            state.ANALYZE_IDS.push(payload);
+        },
+        REFRESH_ANALYZE_DIALOG: (state, payload) => {
+            state.ANALYZE_DIALOG = payload;
+        },
+        REMOVE_ANALYZE_ID: (state, payload) => {
+            state.ANALYZE_IDS.splice(state.ANALYZE_IDS.findIndex(x => x === payload), 1);
+            if (state.ANALYZE_IDS.length === 0) {
+                state.ANALYZE_DIALOG = false;
+            }
+        },
+
+        REFRESH_SPECTROGRAM_ID: (state, payload) => {
+            state.SPECTROGRAM_ID = payload;
+        },
+        REFRESH_SPECTROGRAM_DIALOG: (state, payload) => {
+            state.SPECTROGRAM_DIALOG = payload;
+        },
+
+        REFRESH_GLOBAL_RANGE: (state, payload) => {
+            state.GLOBAL_RANGE = payload;
         }
     },
     actions: {
-        UPDATE_OSC_CHANNELS(context, data) {
-            return new Promise(resolve => {
-                context.commit('REFRESH_OSC_CHANNELS', data);
-                resolve(data);
-            });
-        },
         UPDATE_IDS(context, data) {
             return new Promise(resolve => {
                 context.commit('REFRESH_IDS', data);
