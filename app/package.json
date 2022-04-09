@@ -15,7 +15,7 @@
     "fft-js": "0.0.12",
     "fourier-transform": "^1.1.2",
     "jimp": "^0.13.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.0",
     "vue-context": "^5.1.0",
